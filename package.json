@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.106.2",
+    "react-hook-form": "^7.76.1",
+    "zod": "^4.4.3"
+  },
+  "name": "lib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "supabaseClient.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}
