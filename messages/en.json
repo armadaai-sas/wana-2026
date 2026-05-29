@@ -1,0 +1,43 @@
+{
+  "common": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "language": "Language",
+    "english": "English",
+    "spanish": "Español"
+  },
+  "navigation": {
+    "loadProperty": "Load Property",
+    "viewProperties": "View Properties",
+    "myProperties": "My Properties",
+    "profile": "Profile",
+    "logout": "Logout",
+    "login": "Login"
+  },
+  "form": {
+    "title": "Title",
+    "description": "Description",
+    "pricePerNight": "Price Per Night",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "property": {
+    "loadProperty": "Load Property",
+    "describeYourSanctuary": "Describe your sanctuary (min 400 chars)...",
+    "publishSanctuary": "Publish Sanctuary",
+    "sanctuaryPublishedForModeration": "Sanctuary published for moderation!",
+    "invalidData": "Invalid Data",
+    "databaseError": "Database error"
+  },
+  "errors": {
+    "titleTooShort": "Title is too short",
+    "descriptionTooShort": "Description must be at least 400 characters",
+    "priceInvalid": "Price must be greater than zero",
+    "unauthorized": "Unauthorized",
+    "missingEnvironmentVariables": "Missing Supabase environment variables"
+  }
+}
