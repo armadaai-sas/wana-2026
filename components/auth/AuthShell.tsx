@@ -70,12 +70,12 @@ export default function AuthShell({
             sizes="(min-width: 1024px) 44vw, 0"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-wana-midnight/92 via-wana-emerald-deep/45 to-wana-midnight/80" />
+          <div className="absolute inset-0 bg-gradient-to-br from-wana-black/92 via-wana-black/55 to-wana-black/85" />
           <div
-            className="absolute inset-0 opacity-40"
+            className="absolute inset-0 opacity-35"
             style={{
               backgroundImage:
-                'radial-gradient(circle at 20% 80%, rgba(27,94,74,0.4) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(212,175,122,0.3) 0%, transparent 45%)',
+                'radial-gradient(circle at 20% 80%, rgba(212,175,122,0.2) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 45%)',
             }}
             aria-hidden
           />

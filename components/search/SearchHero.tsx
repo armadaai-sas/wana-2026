@@ -156,8 +156,8 @@ export default function SearchHero() {
               />
             </div>
           ))}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-wana-forest-deep/55 to-wana-forest-deep/92" />
-        <div className="absolute inset-0 bg-gradient-to-r from-wana-forest-deep/70 via-transparent to-black/25" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/55 to-black/88" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-transparent to-black/30" />
         <div
           className="absolute inset-0 opacity-[0.12]"
           style={{
@@ -313,7 +313,7 @@ export default function SearchHero() {
                 <button
                   type="button"
                   onClick={handleSearch}
-                  className="wana-btn-primary w-full min-h-[52px] !rounded-xl sm:!rounded-2xl sm:!px-6 shadow-lg text-white"
+                  className="wana-btn-primary w-full min-h-[52px] !rounded-xl sm:!rounded-2xl sm:!px-6 shadow-lg"
                 >
                   <span className="flex items-center justify-center gap-2">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>

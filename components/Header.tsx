@@ -72,7 +72,7 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
         <div className="flex items-center gap-2">
           <Link
             href={bookHref}
-            className="hidden sm:inline-flex wana-btn-primary !px-5 !py-2.5 text-sm text-white"
+            className="hidden sm:inline-flex wana-btn-primary !px-5 !py-2.5 text-sm"
           >
             {isHome ? 'Buscar fechas' : 'Reservar ahora'}
           </Link>
@@ -155,7 +155,7 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
             <Link
               href={bookHref}
               onClick={closeMenu}
-              className="wana-btn-primary mt-2 justify-center text-white"
+              className="wana-btn-primary mt-2 justify-center"
             >
               {isHome ? 'Buscar fechas' : 'Reservar ahora'}
             </Link>

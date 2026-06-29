@@ -1,52 +1,48 @@
 @import "tailwindcss";
 
 @theme {
+  --color-wana-black: #0a0a0a;
+  --color-wana-black-soft: #141414;
+  --color-wana-black-elevated: #1a1a1a;
+  --color-wana-gray-light: #f0efed;
+  --color-wana-gray: #a8a8a8;
   --color-wana-forest: #0d3b2e;
   --color-wana-forest-light: #1b5e4a;
   --color-wana-forest-deep: #0a2a22;
-  --color-wana-emerald: #1b5e4a;
-  --color-wana-emerald-deep: #0d3b2e;
-  --color-wana-emerald-light: #2a7a5f;
-  --color-wana-midnight: #0b1120;
-  --color-wana-midnight-soft: #151c2f;
   --color-wana-champagne: #d4af7a;
   --color-wana-champagne-light: #e8d5b5;
   --color-wana-champagne-dark: #b8956b;
-  --color-wana-accent: #1b5e4a;
-  --color-wana-accent-deep: #0d3b2e;
-  --color-wana-cream: #faf7f2;
-  --color-wana-sand: #ede8df;
+  --color-wana-cream: #faf9f7;
+  --color-wana-sand: #eceae6;
   --color-wana-gold: #d4af7a;
   --color-wana-gold-light: #e8d5b5;
-  --color-wana-charcoal: #1a1f1c;
-  --color-wana-muted: #6b7280;
-  --color-wana-border: #e5e0d6;
+  --color-wana-charcoal: #1a1a1a;
+  --color-wana-muted: #737373;
+  --color-wana-border: #e5e3df;
 }
 
 :root {
   color-scheme: light;
+  --wana-black: #0a0a0a;
+  --wana-black-soft: #141414;
+  --wana-black-elevated: #1a1a1a;
+  --wana-gray-light: #f0efed;
+  --wana-gray: #a8a8a8;
   --wana-forest: #0d3b2e;
   --wana-forest-light: #1b5e4a;
   --wana-forest-deep: #0a2a22;
-  --wana-emerald: #1b5e4a;
-  --wana-emerald-deep: #0d3b2e;
-  --wana-emerald-light: #2a7a5f;
-  --wana-midnight: #0b1120;
-  --wana-midnight-soft: #151c2f;
   --wana-champagne: #d4af7a;
   --wana-champagne-light: #e8d5b5;
   --wana-champagne-dark: #b8956b;
-  --wana-accent: #1b5e4a;
-  --wana-accent-deep: #0d3b2e;
-  --wana-cream: #faf7f2;
-  --wana-sand: #ede8df;
+  --wana-cream: #faf9f7;
+  --wana-sand: #eceae6;
   --wana-gold: #d4af7a;
   --wana-gold-light: #e8d5b5;
-  --wana-charcoal: #1a1f1c;
-  --wana-muted: #6b7280;
-  --wana-border: #e5e0d6;
-  --wana-shadow: 0 8px 30px rgba(13, 59, 46, 0.08);
-  --wana-shadow-lg: 0 24px 60px rgba(13, 59, 46, 0.12);
+  --wana-charcoal: #1a1a1a;
+  --wana-muted: #737373;
+  --wana-border: #e5e3df;
+  --wana-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  --wana-shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.1);
 }
 
 @layer base {
@@ -84,9 +80,9 @@
   .wana-page-bg {
     background-color: var(--wana-cream);
     background-image:
-      radial-gradient(ellipse 90% 60% at 50% -15%, rgba(212, 175, 122, 0.1), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 100% 10%, rgba(27, 94, 74, 0.06), transparent 50%),
-      radial-gradient(ellipse 40% 30% at 0% 60%, rgba(13, 59, 46, 0.05), transparent 45%);
+      radial-gradient(ellipse 90% 60% at 50% -15%, rgba(212, 175, 122, 0.09), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 20%, rgba(0, 0, 0, 0.03), transparent 50%),
+      radial-gradient(ellipse 40% 30% at 0% 80%, rgba(240, 239, 237, 0.9), transparent 45%);
   }
 
   .wana-container {
@@ -118,12 +114,12 @@
 
   .wana-link {
     font-weight: 600;
-    color: var(--wana-emerald-deep);
+    color: var(--wana-champagne-dark);
     transition: color 0.15s ease;
   }
 
   .wana-link:hover {
-    color: var(--wana-champagne-dark);
+    color: var(--wana-black);
   }
 
   .wana-card {
@@ -158,21 +154,21 @@
     align-items: center;
     justify-content: center;
     border-radius: 9999px;
-    background: linear-gradient(135deg, var(--wana-emerald-deep) 0%, var(--wana-emerald) 100%);
+    background: linear-gradient(135deg, var(--wana-champagne-dark) 0%, var(--wana-champagne) 55%, var(--wana-champagne-light) 100%);
     padding: 0.75rem 1.5rem;
     font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0.02em;
-    color: #ffffff;
-    -webkit-text-fill-color: #ffffff;
-    box-shadow: 0 4px 18px rgba(13, 59, 46, 0.28);
+    color: var(--wana-black);
+    -webkit-text-fill-color: var(--wana-black);
+    box-shadow: 0 4px 18px rgba(184, 149, 107, 0.35);
     transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
   }
 
   a.wana-btn-primary,
   button.wana-btn-primary {
-    color: #ffffff;
-    -webkit-text-fill-color: #ffffff;
+    color: var(--wana-black);
+    -webkit-text-fill-color: var(--wana-black);
   }
 
   a.wana-btn-primary *,
@@ -181,8 +177,8 @@
   }
 
   .wana-btn-primary:hover {
-    filter: brightness(1.06);
-    box-shadow: 0 6px 20px rgba(21, 46, 38, 0.32);
+    filter: brightness(1.04);
+    box-shadow: 0 6px 22px rgba(184, 149, 107, 0.42);
   }
 
   .wana-btn-primary:active {
@@ -241,7 +237,7 @@
   }
 
   .wana-calendar .rdp-root {
-    --rdp-accent-color: var(--wana-emerald-deep);
+    --rdp-accent-color: var(--wana-forest-deep);
     --rdp-accent-background-color: rgba(13, 59, 46, 0.08);
     --rdp-day-height: 38px;
     --rdp-day-width: 38px;
@@ -253,7 +249,7 @@
   }
 
   .wana-calendar .rdp-selected .rdp-day_button {
-    background-color: var(--wana-emerald-deep);
+    background-color: var(--wana-forest-deep);
     color: white;
   }
 
@@ -266,15 +262,15 @@
     align-items: center;
     gap: 0.35rem;
     border-radius: 9999px;
-    background: linear-gradient(135deg, var(--wana-emerald-deep) 0%, var(--wana-emerald) 55%, var(--wana-emerald-light) 100%);
+    background: linear-gradient(135deg, var(--wana-black) 0%, var(--wana-black-elevated) 100%);
     padding: 0.4rem 0.85rem;
     font-size: 0.62rem;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--wana-gold-light);
-    border: 1px solid rgba(196, 165, 116, 0.35);
-    box-shadow: 0 4px 16px rgba(15, 31, 24, 0.2);
+    color: var(--wana-champagne-light);
+    border: 1px solid rgba(212, 175, 122, 0.45);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   }
 
   .wana-glass {
@@ -284,14 +280,10 @@
   }
 
   .wana-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: linear-gradient(
-      180deg,
-      rgba(11, 17, 32, 0.98) 0%,
-      rgba(15, 22, 40, 0.96) 100%
-    );
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.98) 0%, rgba(20, 20, 20, 0.97) 100%);
     backdrop-filter: blur(18px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
   }
 
   .wana-header-nav-link {
@@ -309,9 +301,9 @@
   }
 
   .wana-header-nav-link-active {
-    color: #ffffff;
-    background: rgba(27, 94, 74, 0.22);
-    box-shadow: inset 0 0 0 1px rgba(212, 175, 122, 0.45);
+    color: var(--wana-champagne-light);
+    background: rgba(212, 175, 122, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(212, 175, 122, 0.4);
   }
 
   .wana-header .wana-btn-ghost {
@@ -328,10 +320,10 @@
   }
 
   .wana-header .wana-btn-primary {
-    background: linear-gradient(135deg, var(--wana-emerald-deep) 0%, var(--wana-emerald) 100%);
-    color: #ffffff;
-    -webkit-text-fill-color: #ffffff;
-    box-shadow: 0 4px 20px rgba(13, 59, 46, 0.35);
+    background: linear-gradient(135deg, var(--wana-champagne-dark) 0%, var(--wana-champagne) 55%, var(--wana-champagne-light) 100%);
+    color: var(--wana-black);
+    -webkit-text-fill-color: var(--wana-black);
+    box-shadow: 0 4px 20px rgba(184, 149, 107, 0.38);
   }
 
   .wana-header-account {
@@ -367,17 +359,17 @@
   }
 
   .wana-header-mobile-panel {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background: var(--wana-midnight-soft);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--wana-black-soft);
   }
 
   #buscar {
     scroll-margin-top: 5rem;
   }
 
-  /* —— Auth (split layout internacional) —— */
+  /* —— Auth —— */
   .wana-auth-page {
-    background: var(--wana-midnight);
+    background: var(--wana-black);
     color: #ffffff;
   }
 
@@ -386,16 +378,16 @@
     inset: 0;
     z-index: 0;
     background:
-      radial-gradient(ellipse 70% 50% at 80% 20%, rgba(27, 94, 74, 0.14), transparent 55%),
-      radial-gradient(ellipse 60% 45% at 10% 80%, rgba(212, 175, 122, 0.12), transparent 50%),
-      linear-gradient(165deg, #0b1120 0%, #0a2a22 45%, #0b1120 100%);
+      radial-gradient(ellipse 70% 50% at 80% 20%, rgba(212, 175, 122, 0.08), transparent 55%),
+      radial-gradient(ellipse 60% 45% at 10% 80%, rgba(255, 255, 255, 0.04), transparent 50%),
+      linear-gradient(165deg, #0a0a0a 0%, #111111 45%, #0a0a0a 100%);
   }
 
   @media (width >= 1024px) {
     .wana-auth-bg {
-      background: linear-gradient(90deg, transparent 42%, rgba(11, 17, 32, 0.4) 100%),
-        radial-gradient(ellipse 50% 40% at 70% 30%, rgba(27, 94, 74, 0.1), transparent 60%),
-        var(--wana-midnight);
+      background: linear-gradient(90deg, transparent 42%, rgba(10, 10, 10, 0.5) 100%),
+        radial-gradient(ellipse 50% 40% at 70% 30%, rgba(212, 175, 122, 0.06), transparent 60%),
+        var(--wana-black);
     }
   }
 
@@ -407,9 +399,9 @@
 
   .wana-auth-bg--centered {
     background:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 175, 122, 0.12), transparent 55%),
-      radial-gradient(ellipse 40% 30% at 100% 80%, rgba(27, 94, 74, 0.06), transparent 50%),
-      linear-gradient(180deg, #ffffff 0%, #faf7f2 100%);
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 175, 122, 0.1), transparent 55%),
+      radial-gradient(ellipse 40% 30% at 100% 80%, rgba(0, 0, 0, 0.03), transparent 50%),
+      linear-gradient(180deg, #ffffff 0%, var(--wana-gray-light) 100%);
   }
 
   .wana-auth-card--centered {
@@ -418,8 +410,8 @@
     background: #ffffff;
     padding: 1.75rem;
     box-shadow:
-      0 4px 24px rgba(13, 59, 46, 0.06),
-      0 24px 64px rgba(13, 59, 46, 0.08);
+      0 4px 24px rgba(0, 0, 0, 0.05),
+      0 24px 64px rgba(0, 0, 0, 0.06);
   }
 
   @media (width >= 640px) {
@@ -476,7 +468,7 @@
   .wana-footer {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(180deg, #0b1120 0%, #080d18 100%);
+    background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
     color: #ffffff;
   }
 
@@ -485,8 +477,8 @@
     inset: 0;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 60% 40% at 20% 0%, rgba(27, 94, 74, 0.14), transparent 55%),
-      radial-gradient(ellipse 50% 35% at 90% 100%, rgba(212, 175, 122, 0.12), transparent 50%);
+      radial-gradient(ellipse 60% 40% at 20% 0%, rgba(212, 175, 122, 0.1), transparent 55%),
+      radial-gradient(ellipse 50% 35% at 90% 100%, rgba(255, 255, 255, 0.04), transparent 50%);
   }
 
   .wana-footer-heading {
@@ -555,9 +547,9 @@
   }
 
   .wana-chip-active {
-    border-color: var(--wana-emerald-deep);
+    border-color: var(--wana-forest-deep);
     background: rgba(13, 59, 46, 0.06);
-    color: var(--wana-emerald-deep);
+    color: var(--wana-forest-deep);
   }
 
   .wana-btn-select {
@@ -657,8 +649,8 @@
   }
 
   .wana-search-field-active {
-    background: rgba(244, 241, 234, 0.9);
-    box-shadow: inset 0 0 0 2px var(--wana-emerald-deep);
+    background: rgba(240, 239, 237, 0.95);
+    box-shadow: inset 0 0 0 2px var(--wana-black);
   }
 
   .wana-search-label {
@@ -714,8 +706,8 @@
   }
 
   .wana-dropdown-option-active {
-    background: rgba(13, 59, 46, 0.06);
-    box-shadow: inset 0 0 0 1px var(--wana-emerald-deep);
+    background: rgba(0, 0, 0, 0.04);
+    box-shadow: inset 0 0 0 1px var(--wana-black);
   }
 
   .wana-category-chip {
@@ -740,9 +732,9 @@
   }
 
   .wana-category-chip-active {
-    border-color: var(--wana-emerald-deep);
-    background: rgba(13, 59, 46, 0.06);
-    color: var(--wana-emerald-deep);
+    border-color: var(--wana-black);
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--wana-black);
   }
 
   .wana-stepper-btn {

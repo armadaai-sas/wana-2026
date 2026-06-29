@@ -20,7 +20,7 @@ export default function CinematicBand({
       ? 'bg-black/55'
       : overlay === 'light'
         ? 'bg-wana-cream/88'
-        : 'bg-gradient-to-r from-wana-forest-deep/92 via-wana-forest/78 to-wana-forest-deep/65';
+        : 'bg-gradient-to-r from-black/88 via-black/65 to-black/75';
 
   return (
     <section className={`relative overflow-hidden min-h-[240px] ${className}`}>
@@ -39,7 +39,7 @@ export default function CinematicBand({
           className="absolute inset-0 opacity-30 mix-blend-overlay"
           style={{
             backgroundImage:
-              'radial-gradient(circle at 30% 20%, rgba(196,165,116,0.35) 0%, transparent 45%)',
+              'radial-gradient(circle at 30% 20%, rgba(212,175,122,0.35) 0%, transparent 45%)',
           }}
           aria-hidden
         />

@@ -140,7 +140,7 @@ export default function RegisterPage() {
           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
         )}
 
-        <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px] text-white">
+        <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px]">
           {loading ? 'Creando…' : 'Crear cuenta'}
         </button>
       </form>

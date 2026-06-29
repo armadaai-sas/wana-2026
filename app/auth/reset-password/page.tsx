@@ -43,7 +43,7 @@ function ResetPasswordForm() {
     return (
       <div className="text-center">
         <p className="text-wana-muted">Enlace inválido o incompleto.</p>
-        <Link href="/auth/forgot-password" className="wana-btn-primary mt-6 inline-flex min-h-[48px] text-white">
+        <Link href="/auth/forgot-password" className="wana-btn-primary mt-6 inline-flex min-h-[48px]">
           Solicitar nuevo enlace
         </Link>
       </div>
@@ -92,7 +92,7 @@ function ResetPasswordForm() {
         {error && (
           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
         )}
-        <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px] text-white">
+        <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px]">
           {loading ? 'Guardando…' : 'Restablecer contraseña'}
         </button>
       </form>
