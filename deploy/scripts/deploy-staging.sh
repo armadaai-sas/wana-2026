@@ -52,7 +52,11 @@ echo "→ Build API..."
 docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build api
 
 echo "→ Build Web..."
-docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build web
+if [[ "${BUILD_NO_CACHE:-}" == "1" ]]; then
+  docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build --no-cache web
+else
+  docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build web
+fi
 
 echo "→ Limpiar imágenes Docker huérfanas..."
 docker image prune -f 2>/dev/null || true

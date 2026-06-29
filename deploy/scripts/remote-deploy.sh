@@ -32,6 +32,7 @@ systemctl disable nginx 2>/dev/null || true
 
 chmod +x deploy/scripts/*.sh
 export BASE_URL="http://${DROPLET_IP}"
+export BUILD_NO_CACHE=1
 ./deploy/scripts/deploy-staging.sh
 REMOTE
 

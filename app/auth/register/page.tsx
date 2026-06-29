@@ -68,10 +68,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <AuthShell
-      image="/properties/glamping-wana/04.webp"
-      topLink={{ href: '/auth/login', label: 'Iniciar sesión' }}
-    >
+    <AuthShell topLink={{ href: '/auth/login', label: 'Iniciar sesión' }}>
       <p className="wana-eyebrow">Registro</p>
       <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Crear cuenta</h1>
       <p className="mt-2 text-sm text-wana-muted">Huésped o anfitrión — empieza en minutos.</p>

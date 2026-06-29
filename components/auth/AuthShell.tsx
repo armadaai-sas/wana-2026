@@ -10,27 +10,30 @@ type AuthShellProps = {
   topLink?: { href: string; label: string };
 };
 
-const DEFAULT_IMAGE = '/properties/glamping-wana/04.webp';
+/** Imagen hero full-bleed — misma estética en login y registro */
+export const AUTH_BACKGROUND_IMAGE = '/properties/glamping-wana/01-cover.jpeg';
 
 export default function AuthShell({
   children,
-  image = DEFAULT_IMAGE,
+  image = AUTH_BACKGROUND_IMAGE,
   imageAlt = 'Glamping Waná — experiencia en naturaleza',
   topLink,
 }: AuthShellProps) {
   return (
-    <div className="wana-auth-immersive relative min-h-screen overflow-hidden">
-      <Image
-        src={image}
-        alt={imageAlt}
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover"
-      />
-      <div className="wana-auth-immersive-overlay" aria-hidden />
+    <div className="wana-auth-immersive relative min-h-[100svh]">
+      <div className="wana-auth-immersive-bg" aria-hidden>
+        <Image
+          src={image}
+          alt={imageAlt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="wana-auth-immersive-overlay" />
+      </div>
 
-      <div className="relative z-10 flex min-h-screen flex-col">
+      <div className="relative z-10 flex min-h-[100svh] flex-col">
         <header className="wana-container flex h-16 shrink-0 items-center justify-between">
           <Logo onDark />
           {topLink ? (
