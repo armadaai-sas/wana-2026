@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --wana-forest: #1b4332;
+  --wana-forest-light: #2d6a4f;
+  --wana-cream: #fdfbf7;
+  --wana-sand: #f4f1ea;
+  --wana-muted: #64748b;
+  --wana-border: #e2e8f0;
+  --wana-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+  --wana-shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.12);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+  }
+}
+
+@layer components {
+  .wana-container {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 80rem;
+    padding-inline: 1rem;
+  }
+
+  @media (width >= 640px) {
+    .wana-container {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  @media (width >= 1024px) {
+    .wana-container {
+      padding-inline: 2rem;
+    }
+  }
+
+  .wana-card {
+    border-radius: 1rem;
+    border: 1px solid var(--wana-border);
+    background: white;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+  }
+
+  .wana-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    background: var(--wana-forest);
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: white;
+    transition: background-color 0.15s;
+  }
+
+  .wana-btn-primary:hover {
+    background: var(--wana-forest-light);
+  }
+
+  .wana-btn-primary:disabled {
+    opacity: 0.5;
+  }
+
+  .wana-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    border: 1px solid var(--wana-border);
+    background: white;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1e293b;
+    transition: background-color 0.15s;
+  }
+
+  .wana-btn-ghost:hover {
+    background: #f8fafc;
+  }
+
+  .wana-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: #0f172a;
+  }
+
+  @media (width >= 640px) {
+    .wana-section-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  .wana-calendar .rdp-root {
+    --rdp-accent-color: var(--wana-forest);
+    --rdp-accent-background-color: #e8f5e9;
+    --rdp-day-height: 38px;
+    --rdp-day-width: 38px;
+    font-size: 0.875rem;
+  }
+
+  .wana-calendar .rdp-day_button:hover:not([disabled]) {
+    background-color: #f1f5f9;
+  }
+
+  .wana-calendar .rdp-selected .rdp-day_button {
+    background-color: var(--wana-forest);
+    color: white;
+  }
+
+  .wana-calendar .rdp-today:not(.rdp-selected) .rdp-day_button {
+    border: 1px solid var(--wana-forest);
+  }
+
+  .wana-premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, var(--wana-forest) 0%, var(--wana-forest-light) 100%);
+    padding: 0.35rem 0.75rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: white;
+    box-shadow: 0 4px 14px rgba(27, 67, 50, 0.35);
+  }
+
+  .wana-glass {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.45s ease-out both;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out both;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

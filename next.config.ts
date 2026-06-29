@@ -1,0 +1,23 @@
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
+  output: 'standalone',
+  compress: true,
+  poweredByHeader: false,
+  typescript: {
+    ignoreBuildErrors: process.env.NEXT_IGNORE_TYPE_ERRORS === '1',
+  },
+  images: {
+    formats: ['image/webp'],
+    deviceSizes: [640, 768, 1024, 1280],
+    imageSizes: [256, 384, 640],
+    remotePatterns: [
+      { protocol: 'http', hostname: 'localhost', port: '9000', pathname: '/wana-media/**' },
+      { protocol: 'http', hostname: '164.92.241.30', pathname: '/wana-media/**' },
+      { protocol: 'https', hostname: '**' },
+      { protocol: 'http', hostname: '**' },
+    ],
+  },
+};
+
+export default nextConfig;

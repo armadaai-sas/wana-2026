@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  # publish = "public"  # removed: Next.js 16 outputs to .next; plugin handles publish dir
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build.environment]
+  NODE_VERSION = "20"
