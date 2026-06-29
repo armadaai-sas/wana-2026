@@ -11,9 +11,9 @@ export default function AddPropertyPage() {
           ← Tus propiedades
         </Link>
         <header className="mt-4 mb-8">
-          <p className="text-xs font-bold uppercase tracking-wider text-wana-forest">Anfitrión</p>
-          <h1 className="mt-1 font-display text-3xl text-slate-900">Publicar espacio</h1>
-          <p className="mt-2 text-slate-600">
+          <p className="wana-eyebrow">Anfitrión</p>
+          <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Publicar espacio</h1>
+          <p className="mt-2 text-wana-muted">
             Crea tu propiedad en la plataforma y sube fotos o videos desde el siguiente paso.
           </p>
         </header>

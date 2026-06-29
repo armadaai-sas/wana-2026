@@ -82,6 +82,18 @@ services:
       MINIO_USE_SSL: "false"
     networks:
       - wana_staging
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://127.0.0.1:4000/health',(r)=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 45s
 
   web:
     build:
@@ -100,15 +112,31 @@ services:
       - .env.staging
     environment:
       PORT: 3000
+    volumes:
+      - ./public/properties:/app/public/properties:ro
     networks:
       - wana_staging
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://127.0.0.1:3000/',(r)=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 90s
 
   nginx:
     image: nginx:1.27-alpine
     restart: unless-stopped
     depends_on:
-      - web
-      - api
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
     ports:
       - "80:80"
     volumes:

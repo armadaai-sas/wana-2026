@@ -6,14 +6,17 @@ import { analytics } from '@/lib/analytics';
 import toast from 'react-hot-toast';
 import { wanaApi, type BookingDetail } from '@/lib/api-client';
 import { formatCop, formatDateRange } from '@/lib/format';
+import { formatPropertyLocation } from '@/lib/property-location';
+import PropertyThumb from '@/components/ui/PropertyThumb';
 import StripePaymentForm from './StripePaymentForm';
 
 interface CheckoutClientProps {
   booking: BookingDetail;
   propertySlug?: string;
+  coverImage?: string | null;
 }
 
-export default function CheckoutClient({ booking, propertySlug }: CheckoutClientProps) {
+export default function CheckoutClient({ booking, propertySlug, coverImage }: CheckoutClientProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<'bold' | 'stripe' | 'mock' | null>(null);
   const [stripeSession, setStripeSession] = useState<{
@@ -38,9 +41,9 @@ export default function CheckoutClient({ booking, propertySlug }: CheckoutClient
 
   if (booking.status === 'confirmed') {
     return (
-      <div className="wana-card p-8 text-center">
-        <p className="text-2xl">✓</p>
-        <h2 className="mt-2 font-display text-2xl text-slate-900">Reserva confirmada</h2>
+      <div className="wana-card-premium p-8 text-center">
+        <p className="text-3xl text-wana-gold">✓</p>
+        <h2 className="mt-2 font-display text-2xl text-wana-charcoal">Reserva confirmada</h2>
         <button type="button" onClick={goSuccess} className="wana-btn-primary mt-6">
           Ver confirmación
         </button>
@@ -122,25 +125,25 @@ export default function CheckoutClient({ booking, propertySlug }: CheckoutClient
         <section className="wana-card p-6">
           <h2 className="wana-section-title">Tu viaje</h2>
           <div className="mt-4 flex gap-4">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-wana-sand font-display text-2xl text-wana-forest">
-              W
-            </div>
+            <PropertyThumb src={coverImage} alt={booking.property.title} size="md" />
             <div>
-              <p className="font-semibold text-slate-900">{booking.property.title}</p>
-              <p className="text-sm text-slate-500">{booking.property.city ?? 'Colombia'}</p>
-              <p className="mt-2 text-sm text-slate-600">
+              <p className="font-semibold text-wana-charcoal">{booking.property.title}</p>
+              <p className="text-sm text-wana-muted">
+                {formatPropertyLocation(booking.property.city)}
+              </p>
+              <p className="mt-2 text-sm text-wana-muted">
                 {formatDateRange(checkIn.slice(0, 10), checkOut.slice(0, 10))}
               </p>
-              <p className="text-sm text-slate-600">{booking.guests} huésped{booking.guests > 1 ? 'es' : ''}</p>
+              <p className="text-sm text-wana-muted">
+                {booking.guests} huésped{booking.guests > 1 ? 'es' : ''}
+              </p>
             </div>
           </div>
         </section>
 
         <section className="wana-card p-6">
           <h2 className="wana-section-title">Método de pago</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Elige cómo quieres pagar tu estadía.
-          </p>
+          <p className="mt-2 text-sm text-wana-muted">Elige cómo quieres pagar tu estadía.</p>
 
           {!stripeSession && (
             <div className="mt-6 space-y-3">
@@ -148,13 +151,13 @@ export default function CheckoutClient({ booking, propertySlug }: CheckoutClient
                 type="button"
                 onClick={() => createIntent('bold')}
                 disabled={loading !== null}
-                className="flex w-full items-center justify-between rounded-2xl border-2 border-wana-forest bg-wana-forest/5 px-5 py-4 transition hover:bg-wana-forest/10 disabled:opacity-50"
+                className="wana-btn-select wana-btn-select-active disabled:opacity-50"
               >
-                <div className="text-left">
-                  <span className="font-semibold text-slate-900">Bold</span>
-                  <p className="text-xs text-slate-500">Tarjetas, PSE, Nequi, Bancolombia</p>
+                <div>
+                  <span className="font-semibold text-wana-charcoal">Bold</span>
+                  <p className="text-xs text-wana-muted">Tarjetas, PSE, Nequi, Bancolombia</p>
                 </div>
-                <span className="rounded-full bg-wana-forest px-2 py-0.5 text-xs font-medium text-white">
+                <span className="rounded-full bg-wana-forest px-2.5 py-0.5 text-xs font-semibold text-white">
                   COP
                 </span>
               </button>
@@ -163,26 +166,22 @@ export default function CheckoutClient({ booking, propertySlug }: CheckoutClient
                 type="button"
                 onClick={() => createIntent('stripe')}
                 disabled={loading !== null}
-                className="flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-4 transition hover:border-slate-300 hover:shadow-sm disabled:opacity-50"
+                className="wana-btn-select disabled:opacity-50"
               >
-                <div className="text-left">
-                  <span className="font-semibold text-slate-900">Stripe</span>
-                  <p className="text-xs text-slate-500">Tarjetas internacionales</p>
+                <div>
+                  <span className="font-semibold text-wana-charcoal">Stripe</span>
+                  <p className="text-xs text-wana-muted">Tarjetas internacionales</p>
                 </div>
-                <span className="text-xs text-slate-500">USD</span>
+                <span className="text-xs font-medium text-wana-muted">USD</span>
               </button>
 
-              {loading && (
-                <p className="text-center text-sm text-slate-500">Preparando pago…</p>
-              )}
+              {loading && <p className="text-center text-sm text-wana-muted">Preparando pago…</p>}
             </div>
           )}
 
           {stripeSession && stripeSession.mode === 'mock' && (
-            <div className="mt-6 rounded-xl border border-dashed border-amber-300 bg-amber-50 p-4">
-              <p className="text-sm text-amber-900">
-                Modo desarrollo — Stripe no configurado
-              </p>
+            <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50/80 p-4">
+              <p className="text-sm text-amber-900">Modo desarrollo — Stripe no configurado</p>
               <button
                 type="button"
                 onClick={handleMockStripePay}
@@ -205,27 +204,27 @@ export default function CheckoutClient({ booking, propertySlug }: CheckoutClient
       </div>
 
       <aside className="lg:sticky lg:top-24 lg:self-start">
-        <div className="wana-card p-6 shadow-card">
-          <h3 className="font-semibold text-slate-900">Desglose</h3>
+        <div className="wana-card-premium p-6">
+          <h3 className="font-semibold text-wana-charcoal">Desglose</h3>
           {fees && (
             <div className="mt-4 space-y-2 text-sm">
-              <div className="flex justify-between text-slate-700">
+              <div className="flex justify-between text-wana-charcoal">
                 <span>{formatCop(fees.price_per_night)} × {fees.nights} noches</span>
                 <span>{formatCop(fees.subtotal)}</span>
               </div>
-              <div className="flex justify-between text-slate-500">
+              <div className="flex justify-between text-wana-muted">
                 <span>Impuestos y servicio</span>
                 <span>
                   {formatCop(fees.inc_tax + fees.parafiscal_tax + fees.wana_commission)}
                 </span>
               </div>
-              <div className="flex justify-between border-t border-slate-200 pt-3 font-bold text-slate-900">
+              <div className="flex justify-between border-t border-wana-border pt-3 font-bold text-wana-charcoal">
                 <span>Total (COP)</span>
                 <span>{formatCop(total)}</span>
               </div>
             </div>
           )}
-          <p className="mt-4 text-xs text-slate-500">
+          <p className="mt-4 text-xs text-wana-muted">
             Stripe cobra en USD equivalente. Bold cobra en pesos colombianos.
           </p>
         </div>

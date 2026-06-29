@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
-      <body className="min-h-screen bg-wana-cream font-sans text-slate-900 antialiased">
+      <body className="wana-page-bg min-h-screen font-sans text-wana-charcoal antialiased">
         <MarketingScripts />
         {children}
         <Footer />
@@ -48,6 +48,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             style: {
               borderRadius: '12px',
               padding: '12px 16px',
+              background: '#FAF7F2',
+              color: '#1A1F1C',
+              border: '1px solid #E5E0D6',
             },
           }}
         />

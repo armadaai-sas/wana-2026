@@ -31,6 +31,10 @@ fi
 echo "→ Validando staging env..."
 ENV_FILE="$ROOT/$ENV_FILE" STAGING=1 "$ROOT/deploy/scripts/validate-env.sh"
 
+# Liberar disco/RAM de builds anteriores (no borra volúmenes de DB)
+echo "→ Limpiar cache Docker builder..."
+docker builder prune -f 2>/dev/null || true
+
 # Builds Next en VPS pequeños suelen OOM — swap temporal si hace falta
 if ! swapon --show 2>/dev/null | grep -q '/swapfile'; then
   if [[ ! -f /swapfile ]]; then
@@ -50,8 +54,25 @@ docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build api
 echo "→ Build Web..."
 docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build web
 
+echo "→ Limpiar imágenes Docker huérfanas..."
+docker image prune -f 2>/dev/null || true
+
 echo "→ Up..."
 docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d
+
+echo "→ Esperando API y Web (healthchecks)..."
+deadline=120
+elapsed=0
+while [[ $elapsed -lt $deadline ]]; do
+  api_ok=$(docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps api --format '{{.Health}}' 2>/dev/null | head -1)
+  web_ok=$(docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps web --format '{{.Health}}' 2>/dev/null | head -1)
+  if [[ "$api_ok" == "healthy" && "$web_ok" == "healthy" ]]; then
+    echo "   API y Web healthy"
+    break
+  fi
+  sleep 3
+  elapsed=$((elapsed + 3))
+done
 
 echo "→ Reiniciar nginx (refrescar upstreams tras recreate)..."
 docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" restart nginx

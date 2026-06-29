@@ -41,9 +41,9 @@ function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="wana-card w-full max-w-md p-8 text-center">
-        <p className="text-slate-600">Enlace inválido o incompleto.</p>
-        <Link href="/auth/forgot-password" className="wana-btn-primary mt-6 inline-flex min-h-[44px]">
+      <div className="w-full max-w-md p-6 sm:p-8 wana-card-premium text-center">
+        <p className="text-wana-muted">Enlace inválido o incompleto.</p>
+        <Link href="/auth/forgot-password" className="wana-btn-primary mt-6 inline-flex min-h-[48px]">
           Solicitar nuevo enlace
         </Link>
       </div>
@@ -52,44 +52,45 @@ function ResetPasswordForm() {
 
   if (done) {
     return (
-      <div className="wana-card w-full max-w-md p-8 text-center">
+      <div className="w-full max-w-md p-6 sm:p-8 wana-card-premium text-center">
         <p className="font-medium text-emerald-800">Contraseña actualizada. Redirigiendo al login…</p>
       </div>
     );
   }
 
   return (
-    <div className="wana-card w-full max-w-md p-8">
-      <h1 className="font-display text-2xl text-slate-900">Nueva contraseña</h1>
+    <div className="w-full max-w-md p-6 sm:p-8 wana-card-premium">
+      <p className="wana-eyebrow">Cuenta</p>
+      <h1 className="mt-2 font-display text-2xl text-wana-charcoal sm:text-3xl">Nueva contraseña</h1>
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-        <label className="block space-y-1">
-          <span className="text-sm font-medium text-slate-700">Contraseña (mín. 8)</span>
+        <label className="block space-y-1.5">
+          <span className="wana-label">Contraseña (mín. 8)</span>
           <input
             type="password"
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-wana-forest"
+            className="wana-input"
             required
             disabled={loading}
           />
         </label>
-        <label className="block space-y-1">
-          <span className="text-sm font-medium text-slate-700">Confirmar</span>
+        <label className="block space-y-1.5">
+          <span className="wana-label">Confirmar</span>
           <input
             type="password"
             minLength={8}
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-wana-forest"
+            className="wana-input"
             required
             disabled={loading}
           />
         </label>
         {error && (
-          <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
         )}
-        <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[44px]">
+        <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px]">
           {loading ? 'Guardando…' : 'Restablecer contraseña'}
         </button>
       </form>
@@ -101,8 +102,8 @@ export default function ResetPasswordPage() {
   return (
     <>
       <Header sticky={false} />
-      <main className="wana-container flex min-h-[70vh] items-center justify-center py-12">
-        <Suspense fallback={<p className="text-slate-500">Cargando…</p>}>
+      <main className="wana-container flex min-h-[70vh] items-center justify-center py-10 sm:py-12">
+        <Suspense fallback={<p className="text-wana-muted">Cargando…</p>}>
           <ResetPasswordForm />
         </Suspense>
       </main>

@@ -26,7 +26,7 @@ export default function AdminNav() {
             className={`inline-flex min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium transition ${
               active
                 ? 'bg-wana-forest text-white'
-                : 'border border-slate-200 bg-white text-slate-700 hover:border-wana-forest'
+                : 'border border-wana-border bg-white text-wana-charcoal hover:border-wana-forest'
             }`}
           >
             {link.label}

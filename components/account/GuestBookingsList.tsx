@@ -40,14 +40,14 @@ export default function GuestBookingsList() {
     }
   };
 
-  if (loading) return <p className="mt-6 text-slate-500">Cargando reservas…</p>;
+  if (loading) return <p className="mt-6 text-wana-muted">Cargando reservas…</p>;
 
   if (rows.length === 0) {
     return (
-      <div className="mt-8 border-t border-slate-200 pt-8">
-        <h2 className="font-display text-lg text-slate-900">Mis reservas</h2>
-        <p className="mt-2 text-slate-600">Aún no tienes reservas.</p>
-        <Link href="/properties" className="mt-4 inline-flex text-sm font-medium text-wana-forest hover:underline">
+      <div className="mt-8 border-t border-wana-border pt-8">
+        <h2 className="font-display text-lg text-wana-charcoal">Mis reservas</h2>
+        <p className="mt-2 text-wana-muted">Aún no tienes reservas.</p>
+        <Link href="/properties" className="mt-4 inline-flex text-sm font-semibold text-wana-forest hover:text-wana-gold">
           Explorar espacios →
         </Link>
       </div>
@@ -55,28 +55,28 @@ export default function GuestBookingsList() {
   }
 
   return (
-    <div className="mt-8 border-t border-slate-200 pt-8">
-      <h2 className="font-display text-lg text-slate-900">Mis reservas</h2>
+    <div className="mt-8 border-t border-wana-border pt-8">
+      <h2 className="font-display text-lg text-wana-charcoal">Mis reservas</h2>
       <ul className="mt-4 space-y-4">
         {rows.map((row) => (
-          <li key={row.id} className="rounded-xl border border-slate-200 bg-white p-4">
+          <li key={row.id} className="rounded-2xl border border-wana-border bg-wana-cream/40 p-4 sm:p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <Link
                   href={`/properties/${row.property_slug}`}
-                  className="font-semibold text-slate-900 hover:text-wana-forest"
+                  className="font-semibold text-wana-charcoal hover:text-wana-forest"
                 >
                   {row.property_title}
                 </Link>
-                <p className="text-sm text-slate-500">{row.property_city ?? 'Colombia'}</p>
-                <p className="mt-1 text-sm text-slate-600">
+                <p className="text-sm text-wana-muted">{row.property_city ?? 'Colombia'}</p>
+                <p className="mt-1 text-sm text-wana-muted">
                   {row.check_in} → {row.check_out} · {row.guests} huéspedes
                 </p>
-                <span className="mt-2 inline-block rounded-full bg-wana-sand px-3 py-1 text-xs font-medium">
+                <span className="mt-2 inline-block rounded-full bg-wana-sand px-3 py-1 text-xs font-semibold text-wana-charcoal">
                   {STATUS_LABELS[row.status] ?? row.status}
                 </span>
                 {row.total != null && (
-                  <p className="mt-2 text-sm font-medium text-slate-800">{formatCop(row.total)}</p>
+                  <p className="mt-2 text-sm font-semibold text-wana-charcoal">{formatCop(row.total)}</p>
                 )}
               </div>
               <div className="flex flex-wrap gap-2">

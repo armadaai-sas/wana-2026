@@ -49,6 +49,8 @@ export interface PropertyListItem {
   max_guests: number;
   city: string | null;
   country?: string;
+  latitude?: number | null;
+  longitude?: number | null;
   amenities?: unknown;
   cover_image: string | null;
   rating: number | null;

@@ -50,11 +50,11 @@ export default function AdminModerationPanel() {
     }
   };
 
-  if (loading) return <p className="text-slate-500">Cargando media pendiente…</p>;
+  if (loading) return <p className="text-wana-muted">Cargando media pendiente…</p>;
 
   if (items.length === 0) {
     return (
-      <div className="wana-card p-8 text-center text-slate-600">
+      <div className="wana-card p-8 text-center text-wana-muted">
         No hay fotos o videos pendientes de revisión.
       </div>
     );
@@ -76,8 +76,8 @@ export default function AdminModerationPanel() {
             )}
           </div>
           <div className="p-4 space-y-3">
-            <p className="font-medium text-slate-900">{item.property_title}</p>
-            <p className="text-xs text-slate-500">{item.type}</p>
+            <p className="font-medium text-wana-charcoal">{item.property_title}</p>
+            <p className="text-xs text-wana-muted">{item.type}</p>
             <div className="flex gap-2">
               <button
                 type="button"

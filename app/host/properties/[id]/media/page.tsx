@@ -17,8 +17,9 @@ export default async function HostPropertyMediaPage({
           ← Tus propiedades
         </Link>
         <header className="mt-4 mb-8">
-          <h1 className="font-display text-3xl text-slate-900">Fotos y videos</h1>
-          <p className="mt-2 text-slate-600">Sube imágenes y videos para tu propiedad.</p>
+          <p className="wana-eyebrow">Anfitrión</p>
+          <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Fotos y videos</h1>
+          <p className="mt-2 text-wana-muted">Sube imágenes y videos para tu propiedad.</p>
         </header>
         <MediaUploader propertyId={id} />
       </main>

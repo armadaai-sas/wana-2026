@@ -27,31 +27,34 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header
-      className={`z-50 border-b border-slate-200/80 bg-wana-cream/90 backdrop-blur-md ${
-        sticky ? 'sticky top-0' : ''
-      }`}
-    >
-      <div className="wana-container flex h-16 items-center justify-between gap-4">
+    <header className={`wana-header z-50 ${sticky ? 'sticky top-0' : ''}`}>
+      <div className="wana-container flex h-[4.25rem] items-center justify-between gap-3 sm:gap-4">
         <Logo />
 
-        <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-white hover:text-slate-900 ${
-                pathname.startsWith(link.href) ? 'text-wana-forest' : 'text-slate-600'
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="hidden items-center gap-0.5 md:flex">
+          {navLinks.map((link) => {
+            const active = pathname.startsWith(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  active
+                    ? 'bg-wana-sand text-wana-forest'
+                    : 'text-wana-muted hover:bg-wana-sand/60 hover:text-wana-charcoal'
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           {user?.role === 'admin' && (
             <Link
               href="/admin"
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-white ${
-                pathname.startsWith('/admin') ? 'text-wana-forest' : 'text-slate-600'
+              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                pathname.startsWith('/admin')
+                  ? 'bg-wana-sand text-wana-forest'
+                  : 'text-wana-muted hover:bg-wana-sand/60'
               }`}
             >
               Admin
@@ -60,37 +63,47 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
         </nav>
 
         <div className="flex items-center gap-2">
+          <Link
+            href="/properties"
+            className="hidden sm:inline-flex wana-btn-primary !px-5 !py-2.5 text-sm"
+          >
+            Reservar
+          </Link>
+
           <button
             type="button"
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 md:hidden"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-wana-border bg-white/80 text-wana-charcoal transition hover:border-wana-gold md:hidden"
             aria-expanded={menuOpen}
-            aria-label="Abrir menú"
+            aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
             onClick={() => setMenuOpen((o) => !o)}
           >
-            <span className="text-lg leading-none">{menuOpen ? '✕' : '☰'}</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+              {menuOpen ? (
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              ) : (
+                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              )}
+            </svg>
           </button>
 
           {!loading && user ? (
             <>
               <Link
                 href="/account"
-                className="hidden max-w-[140px] truncate text-sm text-slate-700 sm:inline"
+                className="hidden max-w-[9rem] truncate text-sm text-wana-muted sm:inline hover:text-wana-forest"
               >
                 {user.name ?? user.email}
               </Link>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="wana-btn-ghost !rounded-full !px-4 !py-2 text-sm hidden sm:inline-flex"
+                className="wana-btn-ghost !px-4 !py-2 text-sm hidden sm:inline-flex"
               >
                 Salir
               </button>
             </>
           ) : (
-            <Link
-              href="/auth/login"
-              className="wana-btn-ghost !rounded-full !px-4 !py-2 text-sm hidden sm:inline-flex"
-            >
+            <Link href="/auth/login" className="wana-btn-ghost !px-4 !py-2 text-sm hidden sm:inline-flex">
               Iniciar sesión
             </Link>
           )}
@@ -98,17 +111,17 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
       </div>
 
       {menuOpen && (
-        <div className="border-t border-slate-200 bg-white md:hidden">
+        <div className="border-t border-wana-border bg-wana-cream md:hidden">
           <nav className="wana-container flex flex-col gap-1 py-4">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={closeMenu}
-                className={`rounded-lg px-4 py-3 text-sm font-medium min-h-[44px] ${
+                className={`rounded-xl px-4 py-3 text-sm font-medium min-h-[44px] ${
                   pathname.startsWith(link.href)
                     ? 'bg-wana-sand text-wana-forest'
-                    : 'text-slate-700 hover:bg-wana-sand'
+                    : 'text-wana-charcoal hover:bg-wana-sand/70'
                 }`}
               >
                 {link.label}
@@ -118,24 +131,27 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
               <Link
                 href="/admin"
                 onClick={closeMenu}
-                className="rounded-lg px-4 py-3 text-sm font-medium text-slate-700 min-h-[44px] hover:bg-wana-sand"
+                className="rounded-xl px-4 py-3 text-sm font-medium text-wana-charcoal min-h-[44px] hover:bg-wana-sand/70"
               >
                 Admin
               </Link>
             )}
+            <Link href="/properties" onClick={closeMenu} className="wana-btn-primary mt-2 justify-center">
+              Reservar
+            </Link>
             {!loading && user ? (
               <>
                 <Link
                   href="/account"
                   onClick={closeMenu}
-                  className="rounded-lg px-4 py-3 text-sm text-slate-700 min-h-[44px] hover:bg-wana-sand"
+                  className="rounded-xl px-4 py-3 text-sm text-wana-charcoal min-h-[44px] hover:bg-wana-sand/70"
                 >
                   Mi cuenta
                 </Link>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="rounded-lg px-4 py-3 text-left text-sm text-slate-700 min-h-[44px] hover:bg-wana-sand"
+                  className="wana-btn-ghost mt-1 justify-center min-h-[44px]"
                 >
                   Salir
                 </button>
@@ -144,7 +160,7 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
               <Link
                 href="/auth/login"
                 onClick={closeMenu}
-                className="wana-btn-primary mt-2 justify-center"
+                className="wana-btn-ghost mt-1 justify-center min-h-[44px]"
               >
                 Iniciar sesión
               </Link>

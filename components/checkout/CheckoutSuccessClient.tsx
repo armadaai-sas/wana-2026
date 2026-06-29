@@ -73,7 +73,7 @@ export default function CheckoutSuccessClient({
         {status === 'loading' ? '…' : status === 'confirmed' ? '✓' : '⏳'}
       </div>
 
-      <h1 className="mt-6 font-display text-3xl text-slate-900">
+      <h1 className="mt-6 font-display text-3xl text-wana-charcoal">
         {status === 'confirmed'
           ? '¡Reserva confirmada!'
           : status === 'loading'
@@ -81,7 +81,7 @@ export default function CheckoutSuccessClient({
             : 'Pago en proceso'}
       </h1>
 
-      <p className="mt-3 text-slate-600">
+      <p className="mt-3 text-wana-muted">
         {status === 'confirmed'
           ? 'Te enviaremos los detalles a tu correo. ¡Nos vemos pronto!'
           : 'Estamos confirmando tu pago. Esta página se actualizará automáticamente.'}
@@ -93,7 +93,7 @@ export default function CheckoutSuccessClient({
             Volver a la propiedad
           </Link>
         )}
-        <Link href="/properties" className="text-slate-500 hover:text-slate-800">
+        <Link href="/properties" className="text-wana-muted hover:text-wana-forest">
           Explorar más espacios
         </Link>
       </div>

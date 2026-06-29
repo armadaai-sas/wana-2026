@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { wanaApi } from '@/lib/api-client';
 
@@ -34,31 +33,31 @@ export default function ChangePasswordForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-4 border-t border-slate-200 pt-8">
-      <h2 className="font-display text-lg text-slate-900">Cambiar contraseña</h2>
-      <label className="block space-y-1">
-        <span className="text-sm font-medium text-slate-700">Nueva contraseña</span>
+    <form onSubmit={handleSubmit} className="mt-8 space-y-4 border-t border-wana-border pt-8">
+      <h2 className="font-display text-lg text-wana-charcoal">Cambiar contraseña</h2>
+      <label className="block space-y-1.5">
+        <span className="wana-label">Nueva contraseña</span>
         <input
           type="password"
           minLength={8}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-wana-forest"
+          className="wana-input"
           required
         />
       </label>
-      <label className="block space-y-1">
-        <span className="text-sm font-medium text-slate-700">Confirmar</span>
+      <label className="block space-y-1.5">
+        <span className="wana-label">Confirmar</span>
         <input
           type="password"
           minLength={8}
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
-          className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-wana-forest"
+          className="wana-input"
           required
         />
       </label>
-      <button type="submit" disabled={loading} className="wana-btn-primary min-h-[44px]">
+      <button type="submit" disabled={loading} className="wana-btn-primary min-h-[48px]">
         {loading ? 'Guardando…' : 'Actualizar contraseña'}
       </button>
     </form>

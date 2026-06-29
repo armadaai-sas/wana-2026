@@ -40,13 +40,13 @@ export default function AdminPropertiesPanel() {
     }
   };
 
-  if (loading) return <p className="text-slate-500">Cargando propiedades…</p>;
+  if (loading) return <p className="text-wana-muted">Cargando propiedades…</p>;
 
   return (
     <div className="wana-card overflow-hidden">
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-slate-200 bg-wana-sand/50 text-slate-600">
+          <thead className="border-b border-wana-border bg-wana-sand/50 text-wana-muted">
             <tr>
               <th className="px-4 py-3">Título</th>
               <th className="px-4 py-3">Ciudad</th>
@@ -58,21 +58,21 @@ export default function AdminPropertiesPanel() {
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
+                <td colSpan={5} className="px-4 py-8 text-center text-wana-muted">
                   Sin propiedades
                 </td>
               </tr>
             ) : (
               rows.map((row) => (
-                <tr key={row.id} className="border-b border-slate-100 last:border-0">
-                  <td className="px-4 py-3 font-medium text-slate-900">{row.title}</td>
-                  <td className="px-4 py-3 text-slate-600">{row.city ?? '—'}</td>
+                <tr key={row.id} className="border-b border-wana-border last:border-0">
+                  <td className="px-4 py-3 font-medium text-wana-charcoal">{row.title}</td>
+                  <td className="px-4 py-3 text-wana-muted">{row.city ?? '—'}</td>
                   <td className="px-4 py-3">
                     <span className="rounded-full bg-wana-sand px-3 py-1 text-xs font-medium">
                       {STATUS_LABELS[row.status]}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-600">{row.host_email}</td>
+                  <td className="px-4 py-3 text-wana-muted">{row.host_email}</td>
                   <td className="px-4 py-3">
                     {row.status === 'draft' && (
                       <button

@@ -19,13 +19,13 @@ export default function AdminBookingsPanel() {
       .finally(() => setLoading(false));
   }, [user]);
 
-  if (loading) return <p className="text-slate-500">Cargando reservas…</p>;
+  if (loading) return <p className="text-wana-muted">Cargando reservas…</p>;
 
   return (
     <div className="wana-card overflow-hidden">
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-slate-200 bg-wana-sand/50 text-slate-600">
+          <thead className="border-b border-wana-border bg-wana-sand/50 text-wana-muted">
             <tr>
               <th className="px-4 py-3">Propiedad</th>
               <th className="px-4 py-3">Huésped</th>
@@ -36,19 +36,19 @@ export default function AdminBookingsPanel() {
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
+                <td colSpan={4} className="px-4 py-8 text-center text-wana-muted">
                   Sin reservas
                 </td>
               </tr>
             ) : (
               rows.map((row) => (
-                <tr key={row.id} className="border-b border-slate-100 last:border-0">
-                  <td className="px-4 py-3 font-medium text-slate-900">{row.property_title}</td>
-                  <td className="px-4 py-3 text-slate-600">
+                <tr key={row.id} className="border-b border-wana-border last:border-0">
+                  <td className="px-4 py-3 font-medium text-wana-charcoal">{row.property_title}</td>
+                  <td className="px-4 py-3 text-wana-muted">
                     {row.guest_name ?? row.guest_email}
-                    <span className="block text-xs text-slate-400">{row.guests} huéspedes</span>
+                    <span className="block text-xs text-wana-muted/70">{row.guests} huéspedes</span>
                   </td>
-                  <td className="px-4 py-3 text-slate-600">
+                  <td className="px-4 py-3 text-wana-muted">
                     {row.check_in} → {row.check_out}
                   </td>
                   <td className="px-4 py-3">

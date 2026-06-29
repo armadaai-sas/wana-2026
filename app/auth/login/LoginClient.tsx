@@ -66,11 +66,11 @@ export default function LoginPage() {
   return (
     <>
       <Header sticky={false} />
-      <main className="wana-container flex min-h-[70vh] items-center justify-center py-12">
-        <div className="wana-card w-full max-w-md p-8 shadow-wana-lg">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-wana-forest">Bienvenido</p>
-          <h1 className="mt-1 font-display text-3xl text-slate-900">Iniciar sesión</h1>
-          <p className="mt-2 text-sm text-slate-600">Reserva experiencias exclusivas en Colombia.</p>
+      <main className="wana-container flex min-h-[70vh] items-center justify-center py-10 sm:py-12">
+        <div className="w-full max-w-md p-6 sm:p-8 wana-card-premium">
+          <p className="wana-eyebrow">Bienvenido</p>
+          <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Iniciar sesión</h1>
+          <p className="mt-2 text-sm text-wana-muted">Reserva experiencias exclusivas en Colombia.</p>
 
           <div className="mt-6 space-y-4">
             <TurnstileWidget onToken={setTurnstileToken} onExpire={() => setTurnstileToken('')} />
@@ -80,49 +80,39 @@ export default function LoginPage() {
           <AuthDivider label="o con email" />
 
           <form onSubmit={handleLogin} className="space-y-4">
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-slate-700">Email</span>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-wana-forest focus:ring-2 focus:ring-wana-forest/10"
-                required
-              />
+            <label className="block space-y-1.5">
+              <span className="wana-label">Email</span>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="wana-input" required />
             </label>
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-slate-700">Contraseña</span>
+            <label className="block space-y-1.5">
+              <span className="wana-label">Contraseña</span>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-wana-forest focus:ring-2 focus:ring-wana-forest/10"
+                className="wana-input"
                 required
               />
             </label>
 
             {error && (
-              <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="wana-btn-primary w-full min-h-[44px] !rounded-xl"
-            >
+            <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px]">
               {loading ? 'Entrando…' : 'Entrar'}
             </button>
           </form>
 
           <p className="mt-4 text-center text-sm">
-            <Link href="/auth/forgot-password" className="text-wana-forest hover:underline">
+            <Link href="/auth/forgot-password" className="font-medium text-wana-forest hover:text-wana-gold">
               ¿Olvidaste tu contraseña?
             </Link>
           </p>
 
-          <p className="mt-6 text-center text-sm text-slate-600">
+          <p className="mt-6 text-center text-sm text-wana-muted">
             ¿No tienes cuenta?{' '}
-            <Link href="/auth/register" className="font-medium text-wana-forest hover:underline">
+            <Link href="/auth/register" className="font-semibold text-wana-forest hover:text-wana-gold">
               Regístrate
             </Link>
           </p>

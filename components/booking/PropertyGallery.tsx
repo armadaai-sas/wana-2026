@@ -46,7 +46,7 @@ function MediaSlide({
 function MediaThumb({ item, className }: { item: MediaItem; className?: string }) {
   if (item.type === 'video') {
     return (
-      <div className={`relative ${className} bg-slate-800 flex items-center justify-center`}>
+      <div className={`relative ${className} bg-wana-charcoal flex items-center justify-center`}>
         <span className="text-white text-lg">▶</span>
       </div>
     );
@@ -75,8 +75,8 @@ export default function PropertyGallery({
 
   if (items.length === 0) {
     return (
-      <div className="flex aspect-[16/10] items-center justify-center rounded-2xl bg-wana-sand text-slate-500">
-        Sin fotos o videos
+      <div className="flex aspect-[16/10] items-center justify-center rounded-2xl bg-wana-sand ring-1 ring-wana-border/50">
+        <span className="text-sm text-wana-muted">Sin fotos o videos</span>
       </div>
     );
   }
@@ -97,7 +97,7 @@ export default function PropertyGallery({
           <button
             type="button"
             onClick={() => openAt(0)}
-            className="relative col-span-2 row-span-2 overflow-hidden bg-slate-100"
+            className="relative col-span-2 row-span-2 overflow-hidden bg-wana-sand"
           >
             <MediaSlide item={hero} title={title} className="h-full w-full object-cover transition hover:scale-[1.02]" />
           </button>
@@ -106,7 +106,7 @@ export default function PropertyGallery({
               key={img.id ?? i}
               type="button"
               onClick={() => openAt(i + 1)}
-              className="relative overflow-hidden bg-slate-100"
+              className="relative overflow-hidden bg-wana-sand"
             >
               <MediaThumb item={img} className="h-full w-full object-cover transition hover:scale-[1.02]" />
             </button>
@@ -116,7 +116,7 @@ export default function PropertyGallery({
           <button
             type="button"
             onClick={() => openAt(0)}
-            className="absolute bottom-4 right-4 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold shadow-card hover:bg-slate-50"
+            className="absolute bottom-4 right-4 rounded-full border border-wana-border bg-white/95 px-4 py-2 text-sm font-semibold shadow-card hover:bg-wana-cream"
           >
             Ver todo el media
           </button>
@@ -124,7 +124,7 @@ export default function PropertyGallery({
       </div>
 
       <div className="relative md:hidden">
-        <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-slate-100 shadow-card ring-1 ring-black/5">
+        <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-wana-sand ring-1 ring-wana-border/40">
           <MediaSlide item={items[active]} title={title} className="h-full w-full object-cover" />
         </div>
         {items.length > 1 && (

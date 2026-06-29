@@ -26,13 +26,23 @@ export default async function CheckoutPage({
     redirect(`/checkout/${bookingId}/success${propertySlug ? `?property=${propertySlug}` : ''}`);
   }
 
+  let coverImage: string | null = null;
+  if (propertySlug) {
+    try {
+      const prop = await wanaApi.getProperty(propertySlug);
+      coverImage = prop.cover_image;
+    } catch {
+      coverImage = null;
+    }
+  }
+
   if (booking.status !== 'pending_payment') {
     return (
       <>
         <Header sticky={false} />
         <main className="wana-container py-14">
           <div className="wana-card mx-auto max-w-md p-8 text-center">
-            <p className="text-slate-600">Esta reserva no está disponible para pago ({booking.status}).</p>
+            <p className="text-wana-muted">Esta reserva no está disponible para pago ({booking.status}).</p>
             <Link href="/properties" className="wana-btn-primary mt-6 inline-flex">
               Ver propiedades
             </Link>
@@ -47,10 +57,10 @@ export default async function CheckoutPage({
       <Header sticky={false} />
       <main className="wana-container py-8 lg:py-12">
         <header className="mb-8">
-          <p className="text-xs font-bold uppercase tracking-wider text-wana-forest">Checkout</p>
-          <h1 className="mt-1 font-display text-3xl text-slate-900">Confirma y paga</h1>
+          <p className="wana-eyebrow">Checkout</p>
+          <h1 className="mt-2 font-display text-3xl text-wana-charcoal sm:text-4xl">Confirma y paga</h1>
         </header>
-        <CheckoutClient booking={booking as never} propertySlug={propertySlug} />
+        <CheckoutClient booking={booking as never} propertySlug={propertySlug} coverImage={coverImage} />
       </main>
     </>
   );

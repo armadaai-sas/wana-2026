@@ -7,22 +7,19 @@ import { wanaApi } from '@/lib/api-client';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(null);
+    setError(null);
     setLoading(true);
     try {
-      const res = await wanaApi.forgotPassword(email);
-      setMessage({ type: 'success', text: res.message });
-      setEmail('');
+      await wanaApi.forgotPassword(email);
+      setSent(true);
     } catch (err) {
-      setMessage({
-        type: 'error',
-        text: err instanceof Error ? err.message : 'No se pudo enviar el correo',
-      });
+      setError(err instanceof Error ? err.message : 'Error al enviar');
     } finally {
       setLoading(false);
     }
@@ -31,50 +28,42 @@ export default function ForgotPasswordPage() {
   return (
     <>
       <Header sticky={false} />
-      <main className="wana-container flex min-h-[70vh] items-center justify-center py-12">
-        <div className="wana-card w-full max-w-md p-8">
-          <h1 className="font-display text-2xl text-slate-900">Recuperar contraseña</h1>
-          <p className="mt-3 text-sm text-slate-600">
-            Te enviaremos un enlace válido por 1 hora para crear una nueva contraseña.
+      <main className="wana-container flex min-h-[70vh] items-center justify-center py-10 sm:py-12">
+        <div className="w-full max-w-md p-6 sm:p-8 wana-card-premium">
+          <p className="wana-eyebrow">Cuenta</p>
+          <h1 className="mt-2 font-display text-2xl text-wana-charcoal sm:text-3xl">Recuperar contraseña</h1>
+          <p className="mt-3 text-sm text-wana-muted">
+            Te enviaremos un enlace si el correo está registrado en Waná.
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-slate-700">Email</span>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-wana-forest"
-                required
-                disabled={loading}
-              />
-            </label>
+          {sent ? (
+            <div className="mt-6 rounded-xl border border-wana-gold/30 bg-wana-sand/50 p-4 text-sm text-wana-charcoal">
+              Si el correo existe, recibirás un enlace en unos minutos. Revisa también spam.
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+              <label className="block space-y-1.5">
+                <span className="wana-label">Email</span>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="wana-input"
+                  required
+                />
+              </label>
+              {error && (
+                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+              )}
+              <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px]">
+                {loading ? 'Enviando…' : 'Enviar enlace'}
+              </button>
+            </form>
+          )}
 
-            {message && (
-              <div
-                className={`rounded-xl px-4 py-3 text-sm ${
-                  message.type === 'success'
-                    ? 'bg-emerald-50 text-emerald-800'
-                    : 'bg-red-50 text-red-800'
-                }`}
-              >
-                {message.text}
-              </div>
-            )}
-
-            <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[44px]">
-              {loading ? 'Enviando…' : 'Enviar enlace'}
-            </button>
-          </form>
-
-          <p className="mt-6 text-center text-sm text-slate-600">
-            <Link href="/auth/login" className="font-medium text-wana-forest hover:underline">
-              Volver al login
-            </Link>
-            {' · '}
-            <Link href="/account" className="font-medium text-wana-forest hover:underline">
-              Cambiar desde mi cuenta
+          <p className="mt-6 text-center text-sm text-wana-muted">
+            <Link href="/auth/login" className="font-semibold text-wana-forest hover:text-wana-gold">
+              Volver a iniciar sesión
             </Link>
           </p>
         </div>

@@ -30,8 +30,9 @@ const faqItems = [
 export default function FAQPage() {
   return (
     <article className="max-w-3xl">
-        <h1 className="font-display text-3xl text-slate-900">Preguntas frecuentes</h1>
-        <p className="mt-2 text-slate-600">
+        <p className="wana-eyebrow">Ayuda</p>
+        <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Preguntas frecuentes</h1>
+        <p className="mt-2 text-wana-muted">
           Respuestas sobre reservas, anfitriones y tu cuenta en Waná.
         </p>
         <div className="mt-8 space-y-3">

@@ -26,7 +26,8 @@ export default function PropertyJsonLd({
     priceRange: `COP ${property.price_per_night}`,
     address: {
       '@type': 'PostalAddress',
-      addressLocality: property.city ?? 'Colombia',
+      addressLocality: property.city ?? 'Sutatausa',
+      addressRegion: 'Cundinamarca',
       addressCountry: property.country ?? 'CO',
     },
     aggregateRating:

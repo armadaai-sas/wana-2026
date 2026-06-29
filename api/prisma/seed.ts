@@ -1,5 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import {
+  GLAMPING_WANA_PROPERTY,
+  GLAMPING_WANA_SLUG,
+  glampingWanaMediaSeedData,
+} from './glamping-wana.js';
 
 const prisma = new PrismaClient();
 const DEMO_PASSWORD = 'wana12345';
@@ -9,10 +14,10 @@ async function main() {
 
   const host = await prisma.user.upsert({
     where: { email: 'host@wana.local' },
-    update: { passwordHash, role: 'host' },
+    update: { passwordHash, role: 'host', name: 'Glamping Waná' },
     create: {
       email: 'host@wana.local',
-      name: 'Waná Host',
+      name: 'Glamping Waná',
       role: 'host',
       passwordHash,
     },
@@ -40,55 +45,63 @@ async function main() {
     },
   });
 
+  // Slug antiguo de demo — reemplazado por Glamping Waná
+  await prisma.property.deleteMany({ where: { slug: 'domo-bosque-sereno' } });
+
   const property = await prisma.property.upsert({
-    where: { slug: 'domo-bosque-sereno' },
-    update: {},
-    create: {
-      slug: 'domo-bosque-sereno',
-      title: 'Domo Bosque Sereno',
-      description:
-        'Domo eco-lodge en el bosque con vista panorámica. Ideal para desconectar con naturaleza, fogata privada y cielo estrellado.',
-      pricePerNight: 280000,
-      maxGuests: 4,
+    where: { slug: GLAMPING_WANA_SLUG },
+    update: {
+      title: GLAMPING_WANA_PROPERTY.title,
+      description: GLAMPING_WANA_PROPERTY.description,
+      pricePerNight: GLAMPING_WANA_PROPERTY.pricePerNight,
+      maxGuests: GLAMPING_WANA_PROPERTY.maxGuests,
       status: 'published',
-      city: 'Villa de Leyva',
-      country: 'CO',
-      latitude: 5.6369,
-      longitude: -73.5277,
-      amenities: ['wifi', 'fogata', 'vista', 'estacionamiento'],
+      city: GLAMPING_WANA_PROPERTY.city,
+      country: GLAMPING_WANA_PROPERTY.country,
+      latitude: GLAMPING_WANA_PROPERTY.latitude,
+      longitude: GLAMPING_WANA_PROPERTY.longitude,
+      amenities: GLAMPING_WANA_PROPERTY.amenities,
+      hostId: host.id,
+    },
+    create: {
+      slug: GLAMPING_WANA_SLUG,
+      title: GLAMPING_WANA_PROPERTY.title,
+      description: GLAMPING_WANA_PROPERTY.description,
+      pricePerNight: GLAMPING_WANA_PROPERTY.pricePerNight,
+      maxGuests: GLAMPING_WANA_PROPERTY.maxGuests,
+      status: 'published',
+      city: GLAMPING_WANA_PROPERTY.city,
+      country: GLAMPING_WANA_PROPERTY.country,
+      latitude: GLAMPING_WANA_PROPERTY.latitude,
+      longitude: GLAMPING_WANA_PROPERTY.longitude,
+      amenities: GLAMPING_WANA_PROPERTY.amenities,
       hostId: host.id,
     },
   });
 
   await prisma.propertyMedia.deleteMany({ where: { propertyId: property.id } });
   await prisma.propertyMedia.createMany({
-    data: [
-      {
-        propertyId: property.id,
-        type: 'image',
-        url: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400',
-        sortOrder: 0,
-        status: 'approved',
-        contentType: 'image/jpeg',
-      },
-      {
-        propertyId: property.id,
-        type: 'image',
-        url: 'https://images.unsplash.com/photo-1501785888041-7c11e575e336?w=1200',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1501785888041-7c11e575e336?w=400',
-        sortOrder: 1,
-        status: 'approved',
-        contentType: 'image/jpeg',
-      },
-    ],
+    data: glampingWanaMediaSeedData().map((m) => ({
+      propertyId: property.id,
+      ...m,
+    })),
   });
 
   await prisma.review.deleteMany({ where: { propertyId: property.id } });
   await prisma.review.createMany({
     data: [
-      { propertyId: property.id, rating: 5, comment: 'Experiencia mágica, volveremos.', isVisible: true },
-      { propertyId: property.id, rating: 4, comment: 'Muy tranquilo y bien ubicado.', isVisible: true },
+      {
+        propertyId: property.id,
+        rating: 5,
+        comment: 'Un lugar mágico en Sutatausa. El cielo de noche es increíble.',
+        isVisible: true,
+      },
+      {
+        propertyId: property.id,
+        rating: 5,
+        comment: 'Perfecto para desconectar cerca de Cucunubá. Volveremos.',
+        isVisible: true,
+      },
     ],
   });
 
@@ -98,12 +111,14 @@ async function main() {
     guestId: guest.id,
     adminId: admin.id,
     propertySlug: property.slug,
+    location: 'Sutatausa, Cucunubá, Cundinamarca',
     demoPassword: DEMO_PASSWORD,
     accounts: {
       guest: 'guest@wana.local',
       host: 'host@wana.local',
       admin: 'admin@wana.local',
     },
+    photos: 'Coloca JPG en public/properties/glamping-wana/ (ver scripts/import-glamping-photos.sh)',
   });
 }
 

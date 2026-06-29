@@ -2,15 +2,15 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-200 py-6 text-center text-sm text-slate-600">
-      <div className="flex flex-wrap justify-center gap-4">
-        <Link href="/legal/faq" className="hover:text-slate-900">
-          FAQ Legal
+    <footer className="border-t border-wana-border py-6 text-center text-sm text-wana-muted">
+      <nav className="flex flex-wrap justify-center gap-4">
+        <Link href="/legal/faq" className="hover:text-wana-charcoal">
+          FAQ
         </Link>
-        <Link href="/account" className="hover:text-slate-900">
+        <Link href="/account" className="hover:text-wana-charcoal">
           Mi cuenta
         </Link>
-      </div>
+      </nav>
     </footer>
   );
 }

@@ -11,10 +11,16 @@ const config: Config = {
     extend: {
       colors: {
         wana: {
-          forest: '#1B4332',
-          'forest-light': '#2D6A4F',
-          cream: '#FDFBF7',
-          sand: '#F4F1EA',
+          forest: '#152E26',
+          'forest-light': '#1F4D3A',
+          'forest-deep': '#0F1F18',
+          cream: '#FAF7F2',
+          sand: '#EDE8DF',
+          gold: '#C4A574',
+          'gold-light': '#E8DCC8',
+          charcoal: '#1A1F1C',
+          muted: '#6B7280',
+          border: '#E5E0D6',
         },
       },
       fontFamily: {

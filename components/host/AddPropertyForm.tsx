@@ -56,74 +56,50 @@ export default function AddPropertyForm() {
 
   return (
     <form onSubmit={handleSubmit} className="wana-card space-y-6 p-6 sm:p-8">
-      <div className="rounded-xl border border-wana-sand bg-wana-cream/80 p-4 text-sm text-slate-700">
-        <p className="font-medium text-slate-900">Guía de calidad</p>
-        <p className="mt-1">
+      <div className="rounded-xl border border-wana-gold/30 bg-wana-cream/80 p-4 text-sm text-wana-charcoal">
+        <p className="font-semibold">Guía de calidad</p>
+        <p className="mt-1 text-wana-muted">
           Usa fotos bien iluminadas en alta resolución. Tu espacio quedará en borrador hasta que un
           administrador lo publique.
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block space-y-2">
-          <span className="text-sm font-medium text-slate-700">Título</span>
-          <input
-            name="title"
-            required
-            minLength={3}
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-wana-forest"
-            placeholder="Domo en el bosque"
-          />
+        <label className="block space-y-1.5">
+          <span className="wana-label">Título</span>
+          <input name="title" required minLength={3} className="wana-input" placeholder="Domo en el bosque" />
         </label>
-        <label className="block space-y-2">
-          <span className="text-sm font-medium text-slate-700">Ciudad / zona</span>
-          <input
-            name="city"
-            required
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-wana-forest"
-            placeholder="Guatavita, Cundinamarca"
-          />
+        <label className="block space-y-1.5">
+          <span className="wana-label">Ciudad / zona</span>
+          <input name="city" required className="wana-input" placeholder="Guatavita, Cundinamarca" />
         </label>
       </div>
 
-      <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-700">Descripción</span>
+      <label className="block space-y-1.5">
+        <span className="wana-label">Descripción</span>
         <textarea
           name="description"
           required
           minLength={20}
           rows={5}
-          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-wana-forest"
+          className="wana-input min-h-[120px]"
           placeholder="Describe la experiencia, acceso y lo que incluye la estadía…"
         />
       </label>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block space-y-2">
-          <span className="text-sm font-medium text-slate-700">Precio por noche (COP)</span>
-          <input
-            name="price"
-            type="number"
-            min={1}
-            required
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-wana-forest"
-          />
+        <label className="block space-y-1.5">
+          <span className="wana-label">Precio por noche (COP)</span>
+          <input name="price" type="number" min={1} required className="wana-input" />
         </label>
-        <label className="block space-y-2">
-          <span className="text-sm font-medium text-slate-700">Huéspedes máx.</span>
-          <input
-            name="max_guests"
-            type="number"
-            min={1}
-            max={20}
-            defaultValue={2}
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-wana-forest"
-          />
+        <label className="block space-y-1.5">
+          <span className="wana-label">Huéspedes máx.</span>
+          <input name="max_guests" type="number" min={1} max={20} defaultValue={2} className="wana-input" />
         </label>
       </div>
 
       <fieldset>
-        <legend className="text-sm font-medium text-slate-700">Comodidades</legend>
+        <legend className="wana-label">Comodidades</legend>
         <div className="mt-3 flex flex-wrap gap-2">
           {AMENITY_OPTIONS.map((name) => {
             const active = amenities.includes(name);
@@ -132,11 +108,7 @@ export default function AddPropertyForm() {
                 key={name}
                 type="button"
                 onClick={() => toggleAmenity(name)}
-                className={`rounded-full px-4 py-2 text-sm transition ${
-                  active
-                    ? 'bg-wana-forest text-white'
-                    : 'border border-slate-200 bg-white text-slate-700 hover:border-wana-forest'
-                }`}
+                className={`wana-chip ${active ? 'wana-chip-active' : ''}`}
               >
                 {name}
               </button>
@@ -145,17 +117,17 @@ export default function AddPropertyForm() {
         </div>
       </fieldset>
 
-      <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-700">Foto o video destacado (opcional)</span>
+      <label className="block space-y-1.5">
+        <span className="wana-label">Foto o video destacado (opcional)</span>
         <input
           type="file"
           accept="image/jpeg,image/webp,image/png,video/mp4,video/quicktime"
           onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700"
+          className="wana-input text-sm"
         />
       </label>
 
-      <button type="submit" disabled={loading} className="wana-btn-primary w-full sm:w-auto min-h-[44px]">
+      <button type="submit" disabled={loading} className="wana-btn-primary w-full sm:w-auto min-h-[48px]">
         {loading ? 'Creando…' : 'Crear y subir media'}
       </button>
     </form>

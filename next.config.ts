@@ -7,10 +7,11 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: process.env.NEXT_IGNORE_TYPE_ERRORS === '1',
   },
-  images: {
-    formats: ['image/webp'],
-    deviceSizes: [640, 768, 1024, 1280],
-    imageSizes: [256, 384, 640],
+    images: {
+      formats: ['image/webp'],
+      deviceSizes: [640, 768, 1024, 1280],
+      imageSizes: [256, 384, 640],
+      minimumCacheTTL: 86400,
     remotePatterns: [
       { protocol: 'http', hostname: 'localhost', port: '9000', pathname: '/wana-media/**' },
       { protocol: 'http', hostname: '164.92.241.30', pathname: '/wana-media/**' },

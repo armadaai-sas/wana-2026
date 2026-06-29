@@ -19,19 +19,20 @@ export default async function HealthPage() {
       <Header />
       <main className="wana-container py-10">
         <div className="mx-auto max-w-lg wana-card p-8">
-          <h1 className="font-display text-2xl text-slate-900">Estado del sistema</h1>
+          <p className="wana-eyebrow">Sistema</p>
+          <h1 className="mt-2 font-display text-2xl text-wana-charcoal">Estado del sistema</h1>
           {api ? (
             <ul className="mt-6 space-y-3 text-sm">
               <li className="flex justify-between">
-                <span className="text-slate-600">API</span>
+                <span className="text-wana-muted">API</span>
                 <span className="font-medium text-emerald-700">{api.status}</span>
               </li>
               <li className="flex justify-between">
-                <span className="text-slate-600">Base de datos</span>
+                <span className="text-wana-muted">Base de datos</span>
                 <span className="font-medium">{api.database}</span>
               </li>
               <li className="flex justify-between">
-                <span className="text-slate-600">Servicio</span>
+                <span className="text-wana-muted">Servicio</span>
                 <span className="font-medium">{api.service}</span>
               </li>
             </ul>

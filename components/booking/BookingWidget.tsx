@@ -45,22 +45,22 @@ function GuestStepper({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-sm text-slate-700">Huéspedes</span>
+      <span className="text-sm text-wana-charcoal">Huéspedes</span>
       <div className="flex items-center gap-3">
         <button
           type="button"
           disabled={value <= min}
           onClick={() => onChange(value - 1)}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-slate-600 disabled:opacity-30"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-wana-border bg-white text-wana-forest transition hover:border-wana-gold disabled:opacity-30"
         >
           −
         </button>
-        <span className="w-6 text-center text-sm font-semibold">{value}</span>
+        <span className="w-6 text-center text-sm font-semibold text-wana-charcoal">{value}</span>
         <button
           type="button"
           disabled={value >= max}
           onClick={() => onChange(value + 1)}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-slate-600 disabled:opacity-30"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-wana-border bg-white text-wana-forest transition hover:border-wana-gold disabled:opacity-30"
         >
           +
         </button>
@@ -180,32 +180,32 @@ export default function BookingWidget({
       : formatMoney(pricePerNight, currency);
 
   const widgetBody = (
-    <div className="wana-card p-6 shadow-card lg:shadow-wana-lg">
+    <div className="wana-card-premium p-6 lg:shadow-wana-lg ring-1 ring-wana-gold/10">
       <div className="flex items-baseline gap-1">
-        <span className="text-2xl font-semibold text-slate-900">{formatMoney(pricePerNight, currency)}</span>
-        <span className="text-slate-500">/ noche</span>
+        <span className="text-2xl font-semibold text-wana-charcoal">{formatMoney(pricePerNight, currency)}</span>
+        <span className="text-wana-muted">/ noche</span>
       </div>
 
-      <div className="mt-5 overflow-hidden rounded-xl border border-slate-300">
+      <div className="mt-5 overflow-hidden rounded-xl border border-wana-border bg-white/80">
         <button
           type="button"
           onClick={() => setShowCalendar((s) => !s)}
-          className="grid w-full grid-cols-2 border-b border-slate-300 text-left"
+          className="grid w-full grid-cols-2 border-b border-wana-border text-left"
         >
-          <div className="border-r border-slate-300 p-3 hover:bg-slate-50">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Entrada</p>
-            <p className="text-sm text-slate-800">
+          <div className="border-r border-wana-border p-3 hover:bg-wana-cream/80">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-wana-muted">Entrada</p>
+            <p className="text-sm text-wana-charcoal">
               {range?.from ? format(range.from, 'd MMM', { locale: es }) : 'Agregar'}
             </p>
           </div>
-          <div className="p-3 hover:bg-slate-50">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Salida</p>
-            <p className="text-sm text-slate-800">
+          <div className="p-3 hover:bg-wana-cream/80">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-wana-muted">Salida</p>
+            <p className="text-sm text-wana-charcoal">
               {range?.to ? format(range.to, 'd MMM', { locale: es }) : 'Agregar'}
             </p>
           </div>
         </button>
-        <div className="p-3 hover:bg-slate-50">
+        <div className="p-3 hover:bg-wana-cream/80">
           <GuestStepper value={guests} min={1} max={maxGuests} onChange={setGuests} />
         </div>
       </div>
@@ -240,13 +240,13 @@ export default function BookingWidget({
 
       {quote?.available && nights > 0 && (
         <div className="mt-5 space-y-2.5 text-sm">
-          <div className="flex justify-between text-slate-700">
-            <span className="underline decoration-slate-300">
+          <div className="flex justify-between text-wana-charcoal">
+            <span className="underline decoration-wana-border">
               {formatMoney(quote.fees.price_per_night, currency)} × {nights} noches
             </span>
             <span>{formatMoney(quote.fees.subtotal, currency)}</span>
           </div>
-          <div className="flex justify-between text-slate-500">
+          <div className="flex justify-between text-wana-muted">
             <span>Impuestos y servicio</span>
             <span>
               {formatMoney(
@@ -255,7 +255,7 @@ export default function BookingWidget({
               )}
             </span>
           </div>
-          <div className="flex justify-between border-t border-slate-200 pt-3 font-semibold text-slate-900">
+          <div className="flex justify-between border-t border-wana-border pt-3 font-semibold text-wana-charcoal">
             <span>Total</span>
             <span>{formatMoney(quote.fees.total_charge_to_guest, currency)}</span>
           </div>
@@ -266,11 +266,11 @@ export default function BookingWidget({
         type="button"
         onClick={handleReserve}
         disabled={!canReserve || authLoading}
-        className="wana-btn-primary mt-6 w-full !rounded-xl !py-3.5"
+        className="wana-btn-primary mt-6 w-full min-h-[48px]"
       >
         {!user ? 'Inicia sesión para reservar' : bookingLoading ? 'Reservando…' : quoteLoading ? 'Calculando…' : 'Reservar'}
       </button>
-      <p className="mt-3 text-center text-xs text-slate-500">No se hará ningún cobro por ahora</p>
+      <p className="mt-3 text-center text-xs text-wana-muted">No se hará ningún cobro por ahora</p>
     </div>
   );
 
@@ -279,18 +279,18 @@ export default function BookingWidget({
       <div className="hidden lg:block lg:sticky lg:top-24 lg:self-start">{widgetBody}</div>
 
       {/* Mobile bottom bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] backdrop-blur-lg lg:hidden">
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-wana-border wana-glass px-4 py-3 shadow-[0_-8px_30px_rgba(15,31,24,0.08)] lg:hidden">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-4">
           <div>
-            <p className="font-semibold text-slate-900">{totalDisplay}</p>
-            <p className="text-xs text-slate-500">
+            <p className="font-semibold text-wana-charcoal">{totalDisplay}</p>
+            <p className="text-xs text-wana-muted">
               {nights > 0 ? `${nights} noches` : 'Selecciona fechas'}
             </p>
           </div>
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
-            className="wana-btn-primary !rounded-xl !px-6"
+            className="wana-btn-primary !px-6 min-h-[44px]"
           >
             Reservar
           </button>
@@ -316,11 +316,11 @@ export default function BookingWidget({
               className="absolute bottom-0 left-0 right-0 max-h-[92vh] overflow-y-auto rounded-t-3xl bg-wana-cream p-4 pb-8"
             >
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-semibold text-slate-900">Tu estadía</h3>
+                <h3 className="font-semibold text-wana-charcoal">Tu estadía</h3>
                 <button
                   type="button"
                   onClick={() => setMobileOpen(false)}
-                  className="rounded-full bg-slate-100 px-3 py-1 text-sm"
+                  className="wana-btn-ghost !px-4 !py-2 text-sm min-h-[36px]"
                 >
                   Cerrar
                 </button>

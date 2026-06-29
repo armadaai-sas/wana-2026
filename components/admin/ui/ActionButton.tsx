@@ -13,11 +13,12 @@ export default function ActionButton({
   disabled = false,
   loading = false,
 }: ActionButtonProps) {
-  const baseClasses = 'rounded-full px-4 py-2 text-white font-medium transition-colors disabled:cursor-not-allowed disabled:bg-slate-300';
+  const base =
+    'min-h-[40px] rounded-full px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50';
 
   const variantClasses = {
-    primary: 'bg-blue-600 hover:bg-blue-700',
-    danger: 'bg-red-600 hover:bg-red-700',
+    primary: 'wana-btn-primary !py-2',
+    danger: 'wana-btn-danger',
   };
 
   return (
@@ -25,9 +26,9 @@ export default function ActionButton({
       type="button"
       onClick={onClick}
       disabled={disabled || loading}
-      className={`${baseClasses} ${variantClasses[variant]}`}
+      className={`${base} ${variantClasses[variant]}`}
     >
-      {loading ? 'Processing...' : label}
+      {loading ? 'Procesando…' : label}
     </button>
   );
 }

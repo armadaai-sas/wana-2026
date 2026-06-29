@@ -19,6 +19,8 @@ function serializeProperty(property: {
   status: string;
   city: string | null;
   country: string;
+  latitude?: { toString(): string } | null;
+  longitude?: { toString(): string } | null;
   amenities: unknown;
   media: Array<{
     id: string;
@@ -52,6 +54,8 @@ function serializeProperty(property: {
     status: property.status,
     city: property.city,
     country: property.country,
+    latitude: property.latitude != null ? Number(property.latitude) : null,
+    longitude: property.longitude != null ? Number(property.longitude) : null,
     amenities: property.amenities,
     cover_image: property.media[0]?.thumbnailUrl ?? property.media[0]?.url ?? null,
     media: property.media,

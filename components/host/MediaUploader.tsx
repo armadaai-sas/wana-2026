@@ -62,7 +62,7 @@ export default function MediaUploader({ propertyId }: { propertyId: string }) {
   return (
     <div className="space-y-6">
       <div
-        className={`relative rounded-2xl border-2 border-dashed border-slate-300 bg-wana-sand/30 p-8 text-center transition ${
+        className={`relative rounded-2xl border-2 border-dashed border-wana-border bg-wana-sand/30 p-8 text-center transition ${
           uploading ? 'opacity-60' : 'hover:border-wana-forest hover:bg-wana-sand/50'
         }`}
       >
@@ -74,21 +74,21 @@ export default function MediaUploader({ propertyId }: { propertyId: string }) {
           className="absolute inset-0 cursor-pointer opacity-0"
           onChange={(e) => onFiles(e.target.files)}
         />
-        <p className="font-semibold text-slate-800">Arrastra fotos o videos aquí</p>
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="font-semibold text-wana-charcoal">Arrastra fotos o videos aquí</p>
+        <p className="mt-2 text-sm text-wana-muted">
           JPG, PNG, WebP, GIF · MP4/WebM · Imágenes hasta 10MB · Video hasta 80MB
         </p>
-        {uploading && <p className="mt-3 text-sm text-wana-forest">Subiendo…</p>}
+        {uploading && <p className="mt-3 text-sm font-medium text-wana-forest">Subiendo…</p>}
       </div>
 
       {loading ? (
-        <p className="text-sm text-slate-500">Cargando galería…</p>
+        <p className="text-sm text-wana-muted">Cargando galería…</p>
       ) : items.length === 0 ? (
-        <p className="text-sm text-slate-500">Sin archivos todavía.</p>
+        <p className="text-sm text-wana-muted">Sin archivos todavía.</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
-            <div key={item.id} className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div key={item.id} className="group relative overflow-hidden rounded-xl border border-wana-border bg-white">
               {item.type === 'video' ? (
                 <video
                   src={item.url}
@@ -104,13 +104,13 @@ export default function MediaUploader({ propertyId }: { propertyId: string }) {
                 />
               )}
               <div className="flex items-center justify-between gap-2 px-3 py-2 text-xs">
-                <span className="rounded-full bg-slate-100 px-2 py-0.5 font-medium text-slate-600">
+                <span className="rounded-full bg-wana-sand px-2 py-0.5 font-semibold text-wana-muted">
                   {item.type} · {item.status}
                 </span>
                 <button
                   type="button"
                   onClick={() => onDelete(item.id)}
-                  className="text-red-600 hover:underline"
+                  className="font-medium text-red-600 hover:underline"
                 >
                   Eliminar
                 </button>

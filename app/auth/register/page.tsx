@@ -69,11 +69,11 @@ export default function RegisterPage() {
   return (
     <>
       <Header sticky={false} />
-      <main className="wana-container flex min-h-[70vh] items-center justify-center py-12">
-        <div className="wana-card w-full max-w-md p-8 shadow-wana-lg">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-wana-forest">Únete a Waná</p>
-          <h1 className="mt-1 font-display text-3xl text-slate-900">Crear cuenta</h1>
-          <p className="mt-2 text-sm text-slate-600">Huésped o anfitrión — empieza en minutos.</p>
+      <main className="wana-container flex min-h-[70vh] items-center justify-center py-10 sm:py-12">
+        <div className="w-full max-w-md p-6 sm:p-8 wana-card-premium">
+          <p className="wana-eyebrow">Únete a Waná</p>
+          <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Crear cuenta</h1>
+          <p className="mt-2 text-sm text-wana-muted">Huésped o anfitrión — empieza en minutos.</p>
 
           <div className="mt-6 space-y-4">
             <TurnstileWidget onToken={setTurnstileToken} onExpire={() => setTurnstileToken('')} />
@@ -83,54 +83,39 @@ export default function RegisterPage() {
           <AuthDivider label="o con email" />
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-slate-700">Nombre</span>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-wana-forest focus:ring-2 focus:ring-wana-forest/10"
-                required
-              />
+            <label className="block space-y-1.5">
+              <span className="wana-label">Nombre</span>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="wana-input" required />
             </label>
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-slate-700">Email</span>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-wana-forest focus:ring-2 focus:ring-wana-forest/10"
-                required
-              />
+            <label className="block space-y-1.5">
+              <span className="wana-label">Email</span>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="wana-input" required />
             </label>
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-slate-700">Contraseña (mín. 8)</span>
+            <label className="block space-y-1.5">
+              <span className="wana-label">Contraseña (mín. 8)</span>
               <input
                 type="password"
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-wana-forest focus:ring-2 focus:ring-wana-forest/10"
+                className="wana-input"
                 required
               />
             </label>
             <fieldset className="space-y-2">
-              <span className="text-sm font-medium text-slate-700">Quiero</span>
+              <span className="wana-label">Quiero</span>
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setRole('guest')}
-                  className={`flex-1 rounded-xl border px-4 py-3 text-sm font-medium min-h-[44px] ${
-                    role === 'guest' ? 'border-wana-forest bg-wana-forest/5' : 'border-slate-200'
-                  }`}
+                  className={`wana-chip ${role === 'guest' ? 'wana-chip-active' : ''}`}
                 >
                   Reservar
                 </button>
                 <button
                   type="button"
                   onClick={() => setRole('host')}
-                  className={`flex-1 rounded-xl border px-4 py-3 text-sm font-medium min-h-[44px] ${
-                    role === 'host' ? 'border-wana-forest bg-wana-forest/5' : 'border-slate-200'
-                  }`}
+                  className={`wana-chip ${role === 'host' ? 'wana-chip-active' : ''}`}
                 >
                   Anfitrión
                 </button>
@@ -138,21 +123,17 @@ export default function RegisterPage() {
             </fieldset>
 
             {error && (
-              <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="wana-btn-primary w-full min-h-[44px] !rounded-xl"
-            >
+            <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px]">
               {loading ? 'Creando…' : 'Crear cuenta'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-600">
+          <p className="mt-6 text-center text-sm text-wana-muted">
             ¿Ya tienes cuenta?{' '}
-            <Link href="/auth/login" className="font-medium text-wana-forest hover:underline">
+            <Link href="/auth/login" className="font-semibold text-wana-forest hover:text-wana-gold">
               Inicia sesión
             </Link>
           </p>

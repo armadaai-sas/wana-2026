@@ -18,11 +18,11 @@ export default function AdminOverview() {
       .catch((e) => setError(e instanceof Error ? e.message : 'Error'));
   }, [user]);
 
-  if (authLoading) return <p className="text-slate-500">Cargando…</p>;
+  if (authLoading) return <p className="text-wana-muted">Cargando…</p>;
 
   if (!user || user.role !== 'admin') {
     return (
-      <div className="wana-card p-8 text-center text-slate-600">
+      <div className="wana-card p-8 text-center text-wana-muted">
         Acceso restringido a administradores.
       </div>
     );
@@ -49,8 +49,8 @@ export default function AdminOverview() {
           ))
         : cards.map((card) => (
             <Link key={card.label} href={card.href} className="wana-card p-6 transition hover:shadow-card">
-              <p className="text-sm text-slate-500">{card.label}</p>
-              <p className="mt-2 font-display text-3xl text-slate-900">{card.value}</p>
+              <p className="text-sm text-wana-muted">{card.label}</p>
+              <p className="mt-2 font-display text-3xl text-wana-charcoal">{card.value}</p>
             </Link>
           ))}
     </div>

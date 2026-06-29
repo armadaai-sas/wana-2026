@@ -30,7 +30,8 @@ export default function GoogleSignInButton({
       type: 'standard',
       theme: 'outline',
       size: 'large',
-      width: 320,
+      width: '100%',
+      maxWidth: '100%',
       text,
       locale: 'es',
     });
