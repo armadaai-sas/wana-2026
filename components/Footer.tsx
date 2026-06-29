@@ -1,69 +1,94 @@
 import Link from 'next/link';
+import Logo from '@/components/Logo';
+
+const exploreLinks = [
+  { href: '/properties', label: 'Colección completa' },
+  { href: '/properties/glamping-wana', label: 'Glamping Waná' },
+  { href: '/#buscar', label: 'Buscar fechas' },
+  { href: '/legal/faq', label: 'Preguntas frecuentes' },
+] as const;
+
+const hostLinks = [
+  { href: '/host/add-property', label: 'Publicar espacio' },
+  { href: '/host', label: 'Panel anfitrión' },
+] as const;
+
+const legalLinks = [
+  { href: '/legal/privacy', label: 'Privacidad' },
+  { href: '/legal/terms', label: 'Términos' },
+] as const;
 
 export default function Footer() {
   return (
-    <footer className="mt-20 bg-wana-forest-deep text-white">
-      <div className="wana-container py-14 lg:py-16">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="lg:col-span-1">
-            <p className="font-display text-2xl text-white">Waná</p>
-            <div className="wana-divider-gold mt-4" />
-            <p className="mt-4 text-sm leading-relaxed text-white/70">
-              Colección curada de glamping y refugios en Colombia. Naturaleza, confort y experiencias
-              que se sienten exclusivas.
+    <footer className="wana-footer mt-20">
+      <div className="wana-footer-glow" aria-hidden />
+      <div className="wana-container relative py-14 lg:py-16">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-4">
+            <Logo onDark />
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/82">
+              Plataforma curada de glamping en Colombia. Reserva con confianza, precios claros y
+              experiencias que compiten con los mejores marketplaces del mundo.
+            </p>
+            <p className="mt-4 text-xs font-medium tracking-wide text-wana-accent/90">
+              Sutatausa · Cucunubá · Sabana de Bogotá
             </p>
           </div>
-          <div>
-            <p className="wana-eyebrow !text-wana-gold-light">Explorar</p>
-            <ul className="mt-4 space-y-2.5 text-sm text-white/75">
-              <li>
-                <Link href="/properties" className="transition hover:text-wana-gold-light">
-                  Colección
-                </Link>
-              </li>
-              <li>
-                <Link href="/legal/faq" className="transition hover:text-wana-gold-light">
-                  FAQ
-                </Link>
-              </li>
+
+          <div className="lg:col-span-2 lg:col-start-6">
+            <p className="wana-footer-heading">Explorar</p>
+            <ul className="mt-4 space-y-3">
+              {exploreLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="wana-footer-link">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
-          <div>
-            <p className="wana-eyebrow !text-wana-gold-light">Anfitriones</p>
-            <ul className="mt-4 space-y-2.5 text-sm text-white/75">
-              <li>
-                <Link href="/host/add-property" className="transition hover:text-wana-gold-light">
-                  Publicar espacio
-                </Link>
-              </li>
-              <li>
-                <Link href="/host" className="transition hover:text-wana-gold-light">
-                  Panel anfitrión
-                </Link>
-              </li>
+
+          <div className="lg:col-span-2">
+            <p className="wana-footer-heading">Anfitriones</p>
+            <ul className="mt-4 space-y-3">
+              {hostLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="wana-footer-link">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
-          <div>
-            <p className="wana-eyebrow !text-wana-gold-light">Legal</p>
-            <ul className="mt-4 space-y-2.5 text-sm text-white/75">
-              <li>
-                <Link href="/legal/privacy" className="transition hover:text-wana-gold-light">
-                  Privacidad
-                </Link>
-              </li>
-              <li>
-                <Link href="/legal/terms" className="transition hover:text-wana-gold-light">
-                  Términos
-                </Link>
-              </li>
+
+          <div className="lg:col-span-2">
+            <p className="wana-footer-heading">Legal</p>
+            <ul className="mt-4 space-y-3">
+              {legalLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="wana-footer-link">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
-          <p className="text-xs text-white/50">
-            © {new Date().getFullYear()} Glamping Waná. Todos los derechos reservados.
+
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/12 pt-8 sm:flex-row">
+          <p className="text-sm text-white/65">
+            © {new Date().getFullYear()} Waná Glamping. Todos los derechos reservados.
           </p>
-          <p className="text-xs tracking-wide text-wana-gold-light/80">Colombia · Glamping curado</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
+            <Link href="/auth/login" className="wana-footer-link">
+              Iniciar sesión
+            </Link>
+            <Link href="/auth/register" className="wana-footer-link">
+              Crear cuenta
+            </Link>
+            <span className="text-white/45">·</span>
+            <span className="text-white/55">Colombia</span>
+          </div>
         </div>
       </div>
     </footer>

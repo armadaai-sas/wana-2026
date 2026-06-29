@@ -130,7 +130,7 @@ export default function SearchHero() {
   const guestsLabel = guests === 1 ? '1 huésped' : `${guests} huéspedes`;
 
   return (
-    <section className="relative min-h-[88vh] lg:min-h-[92vh] flex flex-col justify-end overflow-hidden">
+    <section id="buscar" className="relative min-h-[88vh] lg:min-h-[92vh] flex flex-col justify-end overflow-hidden">
       {/* Cinematic background — instant cover, lazy carousel */}
       <div className="absolute inset-0">
         <div
@@ -313,7 +313,7 @@ export default function SearchHero() {
                 <button
                   type="button"
                   onClick={handleSearch}
-                  className="wana-btn-primary w-full min-h-[52px] !rounded-xl sm:!rounded-2xl sm:!px-6 shadow-lg"
+                  className="wana-btn-primary w-full min-h-[52px] !rounded-xl sm:!rounded-2xl sm:!px-6 shadow-lg text-white"
                 >
                   <span className="flex items-center justify-center gap-2">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>

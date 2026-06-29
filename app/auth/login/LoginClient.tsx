@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Header from '@/components/Header';
 import { useAuth } from '@/hooks/useAuth';
 import TurnstileWidget from '@/components/auth/TurnstileWidget';
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
 import AuthDivider from '@/components/auth/AuthDivider';
+import AuthShell from '@/components/auth/AuthShell';
 
 const TURNSTILE_ENABLED = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+const GOOGLE_ENABLED = Boolean(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -64,60 +65,68 @@ export default function LoginPage() {
   };
 
   return (
-    <>
-      <Header sticky={false} />
-      <main className="wana-container flex min-h-[70vh] items-center justify-center py-10 sm:py-12">
-        <div className="w-full max-w-md p-6 sm:p-8 wana-card-premium">
-          <p className="wana-eyebrow">Bienvenido</p>
-          <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Iniciar sesión</h1>
-          <p className="mt-2 text-sm text-wana-muted">Reserva experiencias exclusivas en Colombia.</p>
+    <AuthShell
+      title="Tu próximo refugio te espera"
+      subtitle="Accede para reservar experiencias curadas en Sutatausa, Cucunubá y la sabana de Bogotá."
+    >
+      <p className="wana-eyebrow">Bienvenido</p>
+      <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Iniciar sesión</h1>
+      <p className="mt-2 text-sm text-wana-muted">Reserva con la confianza de una plataforma internacional.</p>
 
-          <div className="mt-6 space-y-4">
-            <TurnstileWidget onToken={setTurnstileToken} onExpire={() => setTurnstileToken('')} />
-            <GoogleSignInButton onCredential={handleGoogle} text="signin_with" />
-          </div>
-
-          <AuthDivider label="o con email" />
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <label className="block space-y-1.5">
-              <span className="wana-label">Email</span>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="wana-input" required />
-            </label>
-            <label className="block space-y-1.5">
-              <span className="wana-label">Contraseña</span>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="wana-input"
-                required
-              />
-            </label>
-
-            {error && (
-              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
-            )}
-
-            <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px]">
-              {loading ? 'Entrando…' : 'Entrar'}
-            </button>
-          </form>
-
-          <p className="mt-4 text-center text-sm">
-            <Link href="/auth/forgot-password" className="font-medium text-wana-forest hover:text-wana-gold">
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </p>
-
-          <p className="mt-6 text-center text-sm text-wana-muted">
-            ¿No tienes cuenta?{' '}
-            <Link href="/auth/register" className="font-semibold text-wana-forest hover:text-wana-gold">
-              Regístrate
-            </Link>
-          </p>
+      {(GOOGLE_ENABLED || TURNSTILE_ENABLED) && (
+        <div className="mt-6 space-y-4">
+          <TurnstileWidget onToken={setTurnstileToken} onExpire={() => setTurnstileToken('')} />
+          {GOOGLE_ENABLED && <GoogleSignInButton onCredential={handleGoogle} text="signin_with" />}
         </div>
-      </main>
-    </>
+      )}
+
+      {GOOGLE_ENABLED && <AuthDivider label="o con email" />}
+
+      <form onSubmit={handleLogin} className="space-y-4">
+        <label className="block space-y-1.5">
+          <span className="wana-label">Email</span>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="wana-input"
+            autoComplete="email"
+            required
+          />
+        </label>
+        <label className="block space-y-1.5">
+          <span className="wana-label">Contraseña</span>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="wana-input"
+            autoComplete="current-password"
+            required
+          />
+        </label>
+
+        {error && (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+        )}
+
+        <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px] text-white">
+          {loading ? 'Entrando…' : 'Entrar'}
+        </button>
+      </form>
+
+      <p className="mt-4 text-center text-sm">
+        <Link href="/auth/forgot-password" className="font-medium text-wana-accent-deep hover:text-wana-accent">
+          ¿Olvidaste tu contraseña?
+        </Link>
+      </p>
+
+      <p className="mt-6 text-center text-sm text-wana-muted">
+        ¿No tienes cuenta?{' '}
+        <Link href="/auth/register" className="font-semibold text-wana-accent-deep hover:text-wana-accent">
+          Regístrate
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

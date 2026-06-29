@@ -3,8 +3,8 @@
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Header from '@/components/Header';
 import { wanaApi } from '@/lib/api-client';
+import AuthShell from '@/components/auth/AuthShell';
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -41,9 +41,9 @@ function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="w-full max-w-md p-6 sm:p-8 wana-card-premium text-center">
+      <div className="text-center">
         <p className="text-wana-muted">Enlace inválido o incompleto.</p>
-        <Link href="/auth/forgot-password" className="wana-btn-primary mt-6 inline-flex min-h-[48px]">
+        <Link href="/auth/forgot-password" className="wana-btn-primary mt-6 inline-flex min-h-[48px] text-white">
           Solicitar nuevo enlace
         </Link>
       </div>
@@ -52,14 +52,14 @@ function ResetPasswordForm() {
 
   if (done) {
     return (
-      <div className="w-full max-w-md p-6 sm:p-8 wana-card-premium text-center">
+      <div className="text-center">
         <p className="font-medium text-emerald-800">Contraseña actualizada. Redirigiendo al login…</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-md p-6 sm:p-8 wana-card-premium">
+    <>
       <p className="wana-eyebrow">Cuenta</p>
       <h1 className="mt-2 font-display text-2xl text-wana-charcoal sm:text-3xl">Nueva contraseña</h1>
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -71,6 +71,7 @@ function ResetPasswordForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="wana-input"
+            autoComplete="new-password"
             required
             disabled={loading}
           />
@@ -83,6 +84,7 @@ function ResetPasswordForm() {
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             className="wana-input"
+            autoComplete="new-password"
             required
             disabled={loading}
           />
@@ -90,23 +92,24 @@ function ResetPasswordForm() {
         {error && (
           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
         )}
-        <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px]">
+        <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px] text-white">
           {loading ? 'Guardando…' : 'Restablecer contraseña'}
         </button>
       </form>
-    </div>
+    </>
   );
 }
 
 export default function ResetPasswordPage() {
   return (
-    <>
-      <Header sticky={false} />
-      <main className="wana-container flex min-h-[70vh] items-center justify-center py-10 sm:py-12">
-        <Suspense fallback={<p className="text-wana-muted">Cargando…</p>}>
-          <ResetPasswordForm />
-        </Suspense>
-      </main>
-    </>
+    <AuthShell
+      title="Define una contraseña segura"
+      subtitle="Protege tu cuenta para reservar y gestionar tus experiencias con tranquilidad."
+      image="/properties/glamping-wana/07.jpg"
+    >
+      <Suspense fallback={<p className="text-wana-muted">Cargando…</p>}>
+        <ResetPasswordForm />
+      </Suspense>
+    </AuthShell>
   );
 }

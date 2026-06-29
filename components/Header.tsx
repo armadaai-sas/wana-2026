@@ -6,11 +6,15 @@ import { useState } from 'react';
 import Logo from '@/components/Logo';
 import { useAuth } from '@/hooks/useAuth';
 
+/** Cada enlace va a un destino distinto — sin duplicar /properties */
 const navLinks = [
-  { href: '/properties', label: 'Explorar' },
-  { href: '/host', label: 'Anfitrión' },
-  { href: '/legal/faq', label: 'FAQ' },
-];
+  { href: '/properties', label: 'Colección', match: (p: string) => p === '/properties' || (p.startsWith('/properties') && !p.includes('glamping-wana')) },
+  { href: '/properties/glamping-wana', label: 'Glamping Waná', match: (p: string) => p.startsWith('/properties/glamping-wana') },
+  { href: '/host/add-property', label: 'Publicar', match: (p: string) => p.startsWith('/host/add-property') },
+  { href: '/legal/faq', label: 'FAQ', match: (p: string) => p.startsWith('/legal/faq') },
+] as const;
+
+const BOOK_URL = '/properties/glamping-wana';
 
 export default function Header({ sticky = true }: { sticky?: boolean }) {
   const { user, logout, loading } = useAuth();
@@ -26,36 +30,39 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
 
   const closeMenu = () => setMenuOpen(false);
 
+  const isHome = pathname === '/';
+  const bookHref = isHome ? '/#buscar' : BOOK_URL;
+
   return (
     <header className={`wana-header z-50 ${sticky ? 'sticky top-0' : ''}`}>
       <div className="wana-container flex h-[4.25rem] items-center justify-between gap-3 sm:gap-4">
-        <Logo />
+        <Logo onDark />
 
         <nav className="hidden items-center gap-0.5 md:flex">
           {navLinks.map((link) => {
-            const active = pathname.startsWith(link.href);
+            const active = link.match(pathname);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                  active
-                    ? 'bg-wana-sand text-wana-forest'
-                    : 'text-wana-muted hover:bg-wana-sand/60 hover:text-wana-charcoal'
-                }`}
+                className={`wana-header-nav-link ${active ? 'wana-header-nav-link-active' : ''}`}
               >
                 {link.label}
               </Link>
             );
           })}
+          {user?.role === 'host' && (
+            <Link
+              href="/host"
+              className={`wana-header-nav-link ${pathname.startsWith('/host') && !pathname.startsWith('/host/add-property') ? 'wana-header-nav-link-active' : ''}`}
+            >
+              Mi panel
+            </Link>
+          )}
           {user?.role === 'admin' && (
             <Link
               href="/admin"
-              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                pathname.startsWith('/admin')
-                  ? 'bg-wana-sand text-wana-forest'
-                  : 'text-wana-muted hover:bg-wana-sand/60'
-              }`}
+              className={`wana-header-nav-link ${pathname.startsWith('/admin') ? 'wana-header-nav-link-active' : ''}`}
             >
               Admin
             </Link>
@@ -64,15 +71,15 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
 
         <div className="flex items-center gap-2">
           <Link
-            href="/properties"
-            className="hidden sm:inline-flex wana-btn-primary !px-5 !py-2.5 text-sm"
+            href={bookHref}
+            className="hidden sm:inline-flex wana-btn-primary !px-5 !py-2.5 text-sm text-white"
           >
-            Reservar
+            {isHome ? 'Buscar fechas' : 'Reservar ahora'}
           </Link>
 
           <button
             type="button"
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-wana-border bg-white/80 text-wana-charcoal transition hover:border-wana-gold md:hidden"
+            className="wana-header-menu-btn md:hidden"
             aria-expanded={menuOpen}
             aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
             onClick={() => setMenuOpen((o) => !o)}
@@ -88,10 +95,7 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
 
           {!loading && user ? (
             <>
-              <Link
-                href="/account"
-                className="hidden max-w-[9rem] truncate text-sm text-wana-muted sm:inline hover:text-wana-forest"
-              >
+              <Link href="/account" className="wana-header-account hidden sm:inline">
                 {user.name ?? user.email}
               </Link>
               <button
@@ -103,7 +107,10 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
               </button>
             </>
           ) : (
-            <Link href="/auth/login" className="wana-btn-ghost !px-4 !py-2 text-sm hidden sm:inline-flex">
+            <Link
+              href="/auth/login"
+              className="wana-btn-ghost !px-4 !py-2 text-sm hidden sm:inline-flex"
+            >
               Iniciar sesión
             </Link>
           )}
@@ -111,7 +118,7 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
       </div>
 
       {menuOpen && (
-        <div className="border-t border-wana-border bg-wana-cream md:hidden">
+        <div className="wana-header-mobile-panel md:hidden">
           <nav className="wana-container flex flex-col gap-1 py-4">
             {navLinks.map((link) => (
               <Link
@@ -119,32 +126,45 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
                 href={link.href}
                 onClick={closeMenu}
                 className={`rounded-xl px-4 py-3 text-sm font-medium min-h-[44px] ${
-                  pathname.startsWith(link.href)
-                    ? 'bg-wana-sand text-wana-forest'
-                    : 'text-wana-charcoal hover:bg-wana-sand/70'
+                  link.match(pathname)
+                    ? 'bg-white/10 text-white'
+                    : 'text-white/85 hover:bg-white/8 hover:text-white'
                 }`}
               >
                 {link.label}
               </Link>
             ))}
+            {user?.role === 'host' && (
+              <Link
+                href="/host"
+                onClick={closeMenu}
+                className="rounded-xl px-4 py-3 text-sm font-medium text-white/85 min-h-[44px] hover:bg-white/8"
+              >
+                Mi panel
+              </Link>
+            )}
             {user?.role === 'admin' && (
               <Link
                 href="/admin"
                 onClick={closeMenu}
-                className="rounded-xl px-4 py-3 text-sm font-medium text-wana-charcoal min-h-[44px] hover:bg-wana-sand/70"
+                className="rounded-xl px-4 py-3 text-sm font-medium text-white/85 min-h-[44px] hover:bg-white/8"
               >
                 Admin
               </Link>
             )}
-            <Link href="/properties" onClick={closeMenu} className="wana-btn-primary mt-2 justify-center">
-              Reservar
+            <Link
+              href={bookHref}
+              onClick={closeMenu}
+              className="wana-btn-primary mt-2 justify-center text-white"
+            >
+              {isHome ? 'Buscar fechas' : 'Reservar ahora'}
             </Link>
             {!loading && user ? (
               <>
                 <Link
                   href="/account"
                   onClick={closeMenu}
-                  className="rounded-xl px-4 py-3 text-sm text-wana-charcoal min-h-[44px] hover:bg-wana-sand/70"
+                  className="rounded-xl px-4 py-3 text-sm text-white/85 min-h-[44px] hover:bg-white/8"
                 >
                   Mi cuenta
                 </Link>

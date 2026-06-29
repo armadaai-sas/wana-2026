@@ -115,9 +115,9 @@ export default async function HomePage() {
               </p>
               <Link
                 href="/properties"
-                className="mt-8 inline-flex min-h-[48px] items-center rounded-full bg-white px-8 py-3 text-sm font-semibold text-wana-forest shadow-lg transition hover:bg-wana-gold-light"
+                className="mt-8 inline-flex min-h-[48px] items-center rounded-full border border-white/30 bg-white/10 px-8 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
               >
-                Explorar espacios
+                Ver toda la colección
               </Link>
             </div>
           </CinematicBand>

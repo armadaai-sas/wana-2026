@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Inter, DM_Serif_Display } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
-import Footer from '@/components/Footer';
+import ConditionalFooter from '@/components/layout/ConditionalFooter';
 import MarketingScripts from '@/components/analytics/MarketingScripts';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://wana.co';
@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="wana-page-bg min-h-screen font-sans text-wana-charcoal antialiased">
         <MarketingScripts />
         {children}
-        <Footer />
+        <ConditionalFooter />
         <Toaster
           position="top-center"
           toastOptions={{

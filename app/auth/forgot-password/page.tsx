@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Header from '@/components/Header';
 import { wanaApi } from '@/lib/api-client';
+import AuthShell from '@/components/auth/AuthShell';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -26,48 +26,48 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <>
-      <Header sticky={false} />
-      <main className="wana-container flex min-h-[70vh] items-center justify-center py-10 sm:py-12">
-        <div className="w-full max-w-md p-6 sm:p-8 wana-card-premium">
-          <p className="wana-eyebrow">Cuenta</p>
-          <h1 className="mt-2 font-display text-2xl text-wana-charcoal sm:text-3xl">Recuperar contraseña</h1>
-          <p className="mt-3 text-sm text-wana-muted">
-            Te enviaremos un enlace si el correo está registrado en Waná.
-          </p>
+    <AuthShell
+      title="Recupera el acceso a tu cuenta"
+      subtitle="Te enviamos un enlace seguro para restablecer tu contraseña."
+      image="/properties/glamping-wana/06.webp"
+    >
+      <p className="wana-eyebrow">Cuenta</p>
+      <h1 className="mt-2 font-display text-2xl text-wana-charcoal sm:text-3xl">Recuperar contraseña</h1>
+      <p className="mt-3 text-sm text-wana-muted">
+        Te enviaremos un enlace si el correo está registrado en Waná.
+      </p>
 
-          {sent ? (
-            <div className="mt-6 rounded-xl border border-wana-gold/30 bg-wana-sand/50 p-4 text-sm text-wana-charcoal">
-              Si el correo existe, recibirás un enlace en unos minutos. Revisa también spam.
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              <label className="block space-y-1.5">
-                <span className="wana-label">Email</span>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="wana-input"
-                  required
-                />
-              </label>
-              {error && (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
-              )}
-              <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px]">
-                {loading ? 'Enviando…' : 'Enviar enlace'}
-              </button>
-            </form>
-          )}
-
-          <p className="mt-6 text-center text-sm text-wana-muted">
-            <Link href="/auth/login" className="font-semibold text-wana-forest hover:text-wana-gold">
-              Volver a iniciar sesión
-            </Link>
-          </p>
+      {sent ? (
+        <div className="mt-6 rounded-xl border border-wana-gold/30 bg-wana-sand/50 p-4 text-sm text-wana-charcoal">
+          Si el correo existe, recibirás un enlace en unos minutos. Revisa también spam.
         </div>
-      </main>
-    </>
+      ) : (
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <label className="block space-y-1.5">
+            <span className="wana-label">Email</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="wana-input"
+              autoComplete="email"
+              required
+            />
+          </label>
+          {error && (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+          )}
+          <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px] text-white">
+            {loading ? 'Enviando…' : 'Enviar enlace'}
+          </button>
+        </form>
+      )}
+
+      <p className="mt-6 text-center text-sm text-wana-muted">
+        <Link href="/auth/login" className="font-semibold text-wana-accent-deep hover:text-wana-accent">
+          Volver a iniciar sesión
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

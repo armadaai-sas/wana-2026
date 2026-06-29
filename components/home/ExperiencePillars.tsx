@@ -63,8 +63,8 @@ export default function ExperiencePillars() {
           ))}
         </div>
         <div className="mt-12 text-center">
-          <Link href="/properties" className="wana-btn-primary inline-flex min-h-[48px] !px-8">
-            Explorar colección
+          <Link href="/properties/glamping-wana" className="wana-btn-primary inline-flex min-h-[48px] !px-8 text-white">
+            Reservar Glamping Waná
           </Link>
         </div>
       </div>
