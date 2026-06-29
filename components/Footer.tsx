@@ -30,7 +30,7 @@ export default function Footer() {
               Plataforma curada de glamping en Colombia. Reserva con confianza, precios claros y
               experiencias que compiten con los mejores marketplaces del mundo.
             </p>
-            <p className="mt-4 text-xs font-medium tracking-wide text-wana-accent/90">
+            <p className="mt-4 text-xs font-medium tracking-wide text-wana-champagne/90">
               Sutatausa · Cucunubá · Sabana de Bogotá
             </p>
           </div>

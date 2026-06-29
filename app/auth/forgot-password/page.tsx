@@ -64,7 +64,7 @@ export default function ForgotPasswordPage() {
       )}
 
       <p className="mt-6 text-center text-sm text-wana-muted">
-        <Link href="/auth/login" className="font-semibold text-wana-accent-deep hover:text-wana-accent">
+        <Link href="/auth/login" className="wana-link">
           Volver a iniciar sesión
         </Link>
       </p>

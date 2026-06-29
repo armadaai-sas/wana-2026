@@ -116,14 +116,14 @@ export default function LoginPage() {
       </form>
 
       <p className="mt-4 text-center text-sm">
-        <Link href="/auth/forgot-password" className="font-medium text-wana-accent-deep hover:text-wana-accent">
+        <Link href="/auth/forgot-password" className="wana-link font-medium">
           ¿Olvidaste tu contraseña?
         </Link>
       </p>
 
       <p className="mt-6 text-center text-sm text-wana-muted">
         ¿No tienes cuenta?{' '}
-        <Link href="/auth/register" className="font-semibold text-wana-accent-deep hover:text-wana-accent">
+        <Link href="/auth/register" className="wana-link">
           Regístrate
         </Link>
       </p>

@@ -1,17 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  --color-wana-forest: #152e26;
-  --color-wana-forest-light: #1f4d3a;
-  --color-wana-forest-deep: #0f1f18;
+  --color-wana-forest: #0d3b2e;
+  --color-wana-forest-light: #1b5e4a;
+  --color-wana-forest-deep: #0a2a22;
+  --color-wana-emerald: #1b5e4a;
+  --color-wana-emerald-deep: #0d3b2e;
+  --color-wana-emerald-light: #2a7a5f;
   --color-wana-midnight: #0b1120;
   --color-wana-midnight-soft: #151c2f;
-  --color-wana-accent: #38bdf8;
-  --color-wana-accent-deep: #6366f1;
+  --color-wana-champagne: #d4af7a;
+  --color-wana-champagne-light: #e8d5b5;
+  --color-wana-champagne-dark: #b8956b;
+  --color-wana-accent: #1b5e4a;
+  --color-wana-accent-deep: #0d3b2e;
   --color-wana-cream: #faf7f2;
   --color-wana-sand: #ede8df;
-  --color-wana-gold: #c4a574;
-  --color-wana-gold-light: #e8dcc8;
+  --color-wana-gold: #d4af7a;
+  --color-wana-gold-light: #e8d5b5;
   --color-wana-charcoal: #1a1f1c;
   --color-wana-muted: #6b7280;
   --color-wana-border: #e5e0d6;
@@ -19,22 +25,28 @@
 
 :root {
   color-scheme: light;
-  --wana-forest: #152e26;
-  --wana-forest-light: #1f4d3a;
-  --wana-forest-deep: #0f1f18;
+  --wana-forest: #0d3b2e;
+  --wana-forest-light: #1b5e4a;
+  --wana-forest-deep: #0a2a22;
+  --wana-emerald: #1b5e4a;
+  --wana-emerald-deep: #0d3b2e;
+  --wana-emerald-light: #2a7a5f;
   --wana-midnight: #0b1120;
   --wana-midnight-soft: #151c2f;
-  --wana-accent: #38bdf8;
-  --wana-accent-deep: #6366f1;
+  --wana-champagne: #d4af7a;
+  --wana-champagne-light: #e8d5b5;
+  --wana-champagne-dark: #b8956b;
+  --wana-accent: #1b5e4a;
+  --wana-accent-deep: #0d3b2e;
   --wana-cream: #faf7f2;
   --wana-sand: #ede8df;
-  --wana-gold: #c4a574;
-  --wana-gold-light: #e8dcc8;
+  --wana-gold: #d4af7a;
+  --wana-gold-light: #e8d5b5;
   --wana-charcoal: #1a1f1c;
   --wana-muted: #6b7280;
   --wana-border: #e5e0d6;
-  --wana-shadow: 0 8px 30px rgba(15, 31, 24, 0.07);
-  --wana-shadow-lg: 0 24px 60px rgba(15, 31, 24, 0.12);
+  --wana-shadow: 0 8px 30px rgba(13, 59, 46, 0.08);
+  --wana-shadow-lg: 0 24px 60px rgba(13, 59, 46, 0.12);
 }
 
 @layer base {
@@ -72,10 +84,9 @@
   .wana-page-bg {
     background-color: var(--wana-cream);
     background-image:
-      radial-gradient(ellipse 90% 60% at 50% -15%, rgba(99, 102, 241, 0.07), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 100% 10%, rgba(56, 189, 248, 0.06), transparent 50%),
-      radial-gradient(ellipse 120% 80% at 50% -20%, rgba(196, 165, 116, 0.08), transparent 50%),
-      radial-gradient(ellipse 40% 30% at 0% 60%, rgba(21, 46, 38, 0.04), transparent 45%);
+      radial-gradient(ellipse 90% 60% at 50% -15%, rgba(212, 175, 122, 0.1), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 10%, rgba(27, 94, 74, 0.06), transparent 50%),
+      radial-gradient(ellipse 40% 30% at 0% 60%, rgba(13, 59, 46, 0.05), transparent 45%);
   }
 
   .wana-container {
@@ -102,7 +113,17 @@
     font-weight: 700;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--wana-gold);
+    color: var(--wana-champagne-dark);
+  }
+
+  .wana-link {
+    font-weight: 600;
+    color: var(--wana-emerald-deep);
+    transition: color 0.15s ease;
+  }
+
+  .wana-link:hover {
+    color: var(--wana-champagne-dark);
   }
 
   .wana-card {
@@ -137,14 +158,14 @@
     align-items: center;
     justify-content: center;
     border-radius: 9999px;
-    background: linear-gradient(135deg, var(--wana-accent-deep) 0%, var(--wana-accent) 100%);
+    background: linear-gradient(135deg, var(--wana-emerald-deep) 0%, var(--wana-emerald) 100%);
     padding: 0.75rem 1.5rem;
     font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0.02em;
     color: #ffffff;
     -webkit-text-fill-color: #ffffff;
-    box-shadow: 0 4px 18px rgba(99, 102, 241, 0.32);
+    box-shadow: 0 4px 18px rgba(13, 59, 46, 0.28);
     transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
   }
 
@@ -220,8 +241,8 @@
   }
 
   .wana-calendar .rdp-root {
-    --rdp-accent-color: var(--wana-forest);
-    --rdp-accent-background-color: #e8f0ec;
+    --rdp-accent-color: var(--wana-emerald-deep);
+    --rdp-accent-background-color: rgba(13, 59, 46, 0.08);
     --rdp-day-height: 38px;
     --rdp-day-width: 38px;
     font-size: 0.875rem;
@@ -232,12 +253,12 @@
   }
 
   .wana-calendar .rdp-selected .rdp-day_button {
-    background-color: var(--wana-forest);
+    background-color: var(--wana-emerald-deep);
     color: white;
   }
 
   .wana-calendar .rdp-today:not(.rdp-selected) .rdp-day_button {
-    border: 1px solid var(--wana-gold);
+    border: 1px solid var(--wana-champagne);
   }
 
   .wana-premium-badge {
@@ -245,7 +266,7 @@
     align-items: center;
     gap: 0.35rem;
     border-radius: 9999px;
-    background: linear-gradient(135deg, var(--wana-forest-deep) 0%, var(--wana-forest) 55%, var(--wana-forest-light) 100%);
+    background: linear-gradient(135deg, var(--wana-emerald-deep) 0%, var(--wana-emerald) 55%, var(--wana-emerald-light) 100%);
     padding: 0.4rem 0.85rem;
     font-size: 0.62rem;
     font-weight: 700;
@@ -289,8 +310,8 @@
 
   .wana-header-nav-link-active {
     color: #ffffff;
-    background: rgba(56, 189, 248, 0.14);
-    box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.35);
+    background: rgba(27, 94, 74, 0.22);
+    box-shadow: inset 0 0 0 1px rgba(212, 175, 122, 0.45);
   }
 
   .wana-header .wana-btn-ghost {
@@ -301,16 +322,16 @@
   }
 
   .wana-header .wana-btn-ghost:hover {
-    border-color: var(--wana-gold);
+    border-color: var(--wana-champagne);
     background: rgba(255, 255, 255, 0.06);
     color: #ffffff;
   }
 
   .wana-header .wana-btn-primary {
-    background: linear-gradient(135deg, var(--wana-accent-deep) 0%, var(--wana-accent) 100%);
+    background: linear-gradient(135deg, var(--wana-emerald-deep) 0%, var(--wana-emerald) 100%);
     color: #ffffff;
     -webkit-text-fill-color: #ffffff;
-    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.35);
+    box-shadow: 0 4px 20px rgba(13, 59, 46, 0.35);
   }
 
   .wana-header-account {
@@ -324,7 +345,7 @@
   }
 
   .wana-header-account:hover {
-    color: var(--wana-gold-light);
+    color: var(--wana-champagne-light);
   }
 
   .wana-header-menu-btn {
@@ -341,7 +362,7 @@
   }
 
   .wana-header-menu-btn:hover {
-    border-color: var(--wana-gold);
+    border-color: var(--wana-champagne);
     background: rgba(255, 255, 255, 0.1);
   }
 
@@ -365,17 +386,52 @@
     inset: 0;
     z-index: 0;
     background:
-      radial-gradient(ellipse 70% 50% at 80% 20%, rgba(56, 189, 248, 0.12), transparent 55%),
-      radial-gradient(ellipse 60% 45% at 10% 80%, rgba(99, 102, 241, 0.14), transparent 50%),
-      linear-gradient(165deg, #0b1120 0%, #121a2e 45%, #0f1729 100%);
+      radial-gradient(ellipse 70% 50% at 80% 20%, rgba(27, 94, 74, 0.14), transparent 55%),
+      radial-gradient(ellipse 60% 45% at 10% 80%, rgba(212, 175, 122, 0.12), transparent 50%),
+      linear-gradient(165deg, #0b1120 0%, #0a2a22 45%, #0b1120 100%);
   }
 
   @media (width >= 1024px) {
     .wana-auth-bg {
       background: linear-gradient(90deg, transparent 42%, rgba(11, 17, 32, 0.4) 100%),
-        radial-gradient(ellipse 50% 40% at 70% 30%, rgba(56, 189, 248, 0.08), transparent 60%),
+        radial-gradient(ellipse 50% 40% at 70% 30%, rgba(27, 94, 74, 0.1), transparent 60%),
         var(--wana-midnight);
     }
+  }
+
+  /* Registro: fondo blanco centrado (estándar internacional) */
+  .wana-auth-page--centered {
+    background: #ffffff;
+    color: var(--wana-charcoal);
+  }
+
+  .wana-auth-bg--centered {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 175, 122, 0.12), transparent 55%),
+      radial-gradient(ellipse 40% 30% at 100% 80%, rgba(27, 94, 74, 0.06), transparent 50%),
+      linear-gradient(180deg, #ffffff 0%, #faf7f2 100%);
+  }
+
+  .wana-auth-card--centered {
+    border-radius: 1.5rem;
+    border: 1px solid var(--wana-border);
+    background: #ffffff;
+    padding: 1.75rem;
+    box-shadow:
+      0 4px 24px rgba(13, 59, 46, 0.06),
+      0 24px 64px rgba(13, 59, 46, 0.08);
+  }
+
+  @media (width >= 640px) {
+    .wana-auth-card--centered {
+      padding: 2.25rem 2.5rem;
+    }
+  }
+
+  .wana-auth-topbar {
+    border-bottom: 1px solid var(--wana-border);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
   }
 
   .wana-auth-card {
@@ -429,8 +485,8 @@
     inset: 0;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 60% 40% at 20% 0%, rgba(56, 189, 248, 0.12), transparent 55%),
-      radial-gradient(ellipse 50% 35% at 90% 100%, rgba(196, 165, 116, 0.1), transparent 50%);
+      radial-gradient(ellipse 60% 40% at 20% 0%, rgba(27, 94, 74, 0.14), transparent 55%),
+      radial-gradient(ellipse 50% 35% at 90% 100%, rgba(212, 175, 122, 0.12), transparent 50%);
   }
 
   .wana-footer-heading {
@@ -438,7 +494,7 @@
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--wana-gold-light);
+    color: var(--wana-champagne-light);
   }
 
   .wana-footer-link {
@@ -450,7 +506,7 @@
   }
 
   .wana-footer-link:hover {
-    color: var(--wana-accent);
+    color: var(--wana-champagne-light);
   }
 
   .wana-label {
@@ -472,8 +528,8 @@
   }
 
   .wana-input:focus {
-    border-color: var(--wana-gold);
-    box-shadow: 0 0 0 3px rgba(196, 165, 116, 0.22);
+    border-color: var(--wana-champagne);
+    box-shadow: 0 0 0 3px rgba(212, 175, 122, 0.22);
   }
 
   .wana-input::placeholder {
@@ -499,9 +555,9 @@
   }
 
   .wana-chip-active {
-    border-color: var(--wana-forest);
-    background: rgba(21, 46, 38, 0.06);
-    color: var(--wana-forest);
+    border-color: var(--wana-emerald-deep);
+    background: rgba(13, 59, 46, 0.06);
+    color: var(--wana-emerald-deep);
   }
 
   .wana-btn-select {
@@ -602,7 +658,7 @@
 
   .wana-search-field-active {
     background: rgba(244, 241, 234, 0.9);
-    box-shadow: inset 0 0 0 2px var(--wana-forest);
+    box-shadow: inset 0 0 0 2px var(--wana-emerald-deep);
   }
 
   .wana-search-label {
@@ -658,8 +714,8 @@
   }
 
   .wana-dropdown-option-active {
-    background: rgba(21, 46, 38, 0.06);
-    box-shadow: inset 0 0 0 1px var(--wana-forest);
+    background: rgba(13, 59, 46, 0.06);
+    box-shadow: inset 0 0 0 1px var(--wana-emerald-deep);
   }
 
   .wana-category-chip {
@@ -684,9 +740,9 @@
   }
 
   .wana-category-chip-active {
-    border-color: var(--wana-forest);
-    background: rgba(21, 46, 38, 0.06);
-    color: var(--wana-forest);
+    border-color: var(--wana-emerald-deep);
+    background: rgba(13, 59, 46, 0.06);
+    color: var(--wana-emerald-deep);
   }
 
   .wana-stepper-btn {

@@ -68,11 +68,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <AuthShell
-      title="Únete a la colección Waná"
-      subtitle="Crea tu cuenta como huésped o anfitrión y accede a experiencias glamping de nivel internacional."
-      image="/properties/glamping-wana/04.webp"
-    >
+    <AuthShell layout="centered">
       <p className="wana-eyebrow">Registro</p>
       <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Crear cuenta</h1>
       <p className="mt-2 text-sm text-wana-muted">Huésped o anfitrión — empieza en minutos.</p>
@@ -151,7 +147,7 @@ export default function RegisterPage() {
 
       <p className="mt-6 text-center text-sm text-wana-muted">
         ¿Ya tienes cuenta?{' '}
-        <Link href="/auth/login" className="font-semibold text-wana-accent-deep hover:text-wana-accent">
+        <Link href="/auth/login" className="wana-link">
           Inicia sesión
         </Link>
       </p>
