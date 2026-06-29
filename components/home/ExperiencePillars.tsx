@@ -53,7 +53,7 @@ export default function ExperiencePillars() {
               style={{ animationDelay: `${i * 80}ms` }}
             >
               <span
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-wana-gold/30 bg-wana-cream text-lg text-wana-forest transition group-hover:border-wana-gold group-hover:bg-wana-forest group-hover:text-wana-gold-light"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-wana-gold/30 bg-wana-cream text-lg text-wana-charcoal transition group-hover:border-wana-gold group-hover:bg-wana-black group-hover:text-wana-champagne-light"
               >
                 {p.icon}
               </span>

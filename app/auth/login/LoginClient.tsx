@@ -66,8 +66,8 @@ export default function LoginPage() {
 
   return (
     <AuthShell
-      title="Tu próximo refugio te espera"
-      subtitle="Accede para reservar experiencias curadas en Sutatausa, Cucunubá y la sabana de Bogotá."
+      image="/properties/glamping-wana/04.webp"
+      topLink={{ href: '/auth/register', label: 'Crear cuenta' }}
     >
       <p className="wana-eyebrow">Bienvenido</p>
       <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Iniciar sesión</h1>

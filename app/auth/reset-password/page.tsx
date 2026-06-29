@@ -53,7 +53,7 @@ function ResetPasswordForm() {
   if (done) {
     return (
       <div className="text-center">
-        <p className="font-medium text-emerald-800">Contraseña actualizada. Redirigiendo al login…</p>
+        <p className="font-medium text-wana-charcoal">Contraseña actualizada. Redirigiendo al login…</p>
       </div>
     );
   }
@@ -102,11 +102,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <AuthShell
-      title="Define una contraseña segura"
-      subtitle="Protege tu cuenta para reservar y gestionar tus experiencias con tranquilidad."
-      image="/properties/glamping-wana/07.jpg"
-    >
+    <AuthShell image="/properties/glamping-wana/07.jpg">
       <Suspense fallback={<p className="text-wana-muted">Cargando…</p>}>
         <ResetPasswordForm />
       </Suspense>

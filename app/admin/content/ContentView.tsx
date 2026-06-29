@@ -47,7 +47,7 @@ export default function ContentView({
                     {onEdit && (
                       <button
                         onClick={() => onEdit(item.id)}
-                        className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                        className="text-wana-charcoal hover:text-wana-champagne-dark font-medium text-sm"
                       >
                         Edit
                       </button>

@@ -50,7 +50,7 @@ export default function PropertyCard({ property }: { property: Property }) {
                 loading="lazy"
               />
               <div
-                className="absolute inset-0 bg-gradient-to-t from-wana-forest-deep/55 via-transparent to-transparent"
+                className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent"
                 aria-hidden
               />
             </>
@@ -60,7 +60,7 @@ export default function PropertyCard({ property }: { property: Property }) {
 
           <div className="absolute left-3 top-3 flex flex-wrap gap-2">
             {isFeatured && (
-              <span className="rounded-full border border-wana-gold/40 bg-wana-forest-deep/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-wana-gold-light shadow-sm">
+              <span className="rounded-full border border-wana-gold/40 bg-black/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-wana-gold-light shadow-sm">
                 Destacado
               </span>
             )}
@@ -82,7 +82,7 @@ export default function PropertyCard({ property }: { property: Property }) {
         </div>
 
         <div className="mt-3.5 space-y-1 px-0.5">
-          <h3 className="font-semibold text-wana-charcoal line-clamp-1 transition group-hover:text-wana-forest">
+          <h3 className="font-semibold text-wana-charcoal line-clamp-1 transition group-hover:text-wana-black">
             {property.title ?? 'Propiedad sin título'}
           </h3>
           <p className="text-sm text-wana-muted line-clamp-1">{location ?? 'Colombia'}</p>

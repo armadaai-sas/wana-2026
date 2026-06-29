@@ -77,7 +77,7 @@ export default async function HomePage() {
           </section>
         )}
 
-        <CinematicBand image="/properties/glamping-wana/05.webp" alt="Montañas de Sutatausa" overlay="forest">
+        <CinematicBand image="/properties/glamping-wana/05.webp" alt="Montañas de Sutatausa" overlay="dark">
           <div className="wana-container py-16 sm:py-20 text-center text-white">
             <p className="wana-eyebrow !text-wana-gold-light">Sabana de Bogotá</p>
             <h2 className="mt-4 font-display text-2xl sm:text-3xl lg:text-4xl max-w-2xl mx-auto">
@@ -89,7 +89,7 @@ export default async function HomePage() {
             </p>
             <Link
               href="/properties/glamping-wana"
-              className="mt-8 inline-flex min-h-[48px] items-center rounded-full bg-white px-8 py-3 text-sm font-semibold text-wana-forest shadow-lg transition hover:bg-wana-gold-light"
+              className="mt-8 inline-flex min-h-[48px] items-center rounded-full bg-white px-8 py-3 text-sm font-semibold text-wana-charcoal shadow-lg transition hover:bg-wana-gold-light"
             >
               Ver Glamping Waná
             </Link>

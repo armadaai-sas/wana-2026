@@ -67,7 +67,7 @@ export default function CheckoutSuccessClient({
     <div className="mx-auto max-w-lg text-center">
       <div
         className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full text-2xl ${
-          status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : 'bg-wana-sand text-wana-forest'
+          status === 'confirmed' ? 'bg-wana-sand text-wana-charcoal' : 'bg-wana-sand text-wana-muted'
         }`}
       >
         {status === 'loading' ? '…' : status === 'confirmed' ? '✓' : '⏳'}

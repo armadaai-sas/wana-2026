@@ -157,7 +157,7 @@ export default function CheckoutClient({ booking, propertySlug, coverImage }: Ch
                   <span className="font-semibold text-wana-charcoal">Bold</span>
                   <p className="text-xs text-wana-muted">Tarjetas, PSE, Nequi, Bancolombia</p>
                 </div>
-                <span className="rounded-full bg-wana-forest px-2.5 py-0.5 text-xs font-semibold text-white">
+                <span className="rounded-full bg-wana-black px-2.5 py-0.5 text-xs font-semibold text-white">
                   COP
                 </span>
               </button>

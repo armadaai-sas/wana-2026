@@ -34,7 +34,7 @@ export default function ModerationView({
             type="button"
             onClick={onBulkApprove}
             disabled={bulkLoading || loading || items.length === 0}
-            className="rounded-full bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-wana-sand"
+            className="rounded-full bg-wana-black px-4 py-2 text-white hover:bg-wana-black-soft disabled:cursor-not-allowed disabled:bg-wana-sand disabled:text-wana-muted"
           >
             {bulkLoading ? 'Approving...' : 'Approve All'}
           </button>
@@ -76,7 +76,7 @@ export default function ModerationView({
                     type="button"
                     onClick={() => onApprove(item.id)}
                     disabled={processingIds.has(item.id) || bulkLoading}
-                    className="rounded-full bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-wana-sand"
+                    className="rounded-full bg-wana-champagne px-4 py-2 font-medium text-wana-black hover:bg-wana-champagne-light disabled:cursor-not-allowed disabled:bg-wana-sand disabled:text-wana-muted"
                   >
                     {processingIds.has(item.id) ? 'Processing...' : 'Approve'}
                   </button>

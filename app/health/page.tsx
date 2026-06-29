@@ -25,7 +25,7 @@ export default async function HealthPage() {
             <ul className="mt-6 space-y-3 text-sm">
               <li className="flex justify-between">
                 <span className="text-wana-muted">API</span>
-                <span className="font-medium text-emerald-700">{api.status}</span>
+                <span className="font-medium text-wana-charcoal">{api.status}</span>
               </li>
               <li className="flex justify-between">
                 <span className="text-wana-muted">Base de datos</span>
