@@ -12,6 +12,7 @@ import {
 } from '../lib/reserve-availability.js';
 import { calculateCancellationRefund } from '../lib/cancellation-policy.js';
 import { issuePaymentRefund } from '../lib/refund-payment.js';
+import { sendBookingCancellationEmail } from '../lib/transactional-emails.js';
 import { authenticate } from '../plugins/auth.js';
 
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -262,6 +263,22 @@ export async function bookingRoutes(app: FastifyInstance) {
       });
 
       return b;
+    });
+
+    const cancellationReason =
+      refundInfo?.reason ??
+      (booking.status === 'pending_payment'
+        ? 'Reserva pendiente de pago — sin cargo.'
+        : 'Reserva cancelada según solicitud.');
+
+    sendBookingCancellationEmail({
+      bookingId: id,
+      reason: cancellationReason,
+      refundAmount: refundInfo?.refund_amount,
+      refundEligible: refundInfo?.eligible,
+      expiredUnpaid: false,
+    }).catch((err) => {
+      request.log.warn({ err, bookingId: id }, 'Cancellation email not sent');
     });
 
     return {

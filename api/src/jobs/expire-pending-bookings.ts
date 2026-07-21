@@ -1,4 +1,5 @@
 import { prisma } from '../lib/prisma.js';
+import { sendBookingCancellationEmail } from '../lib/transactional-emails.js';
 
 const DEFAULT_TTL_MINUTES = 30;
 
@@ -38,6 +39,15 @@ export async function expireStalePendingBookings(): Promise<number> {
           metadata: { reason: 'expired_unpaid', ttl_minutes: ttlMinutes },
         },
       });
+    });
+
+    sendBookingCancellationEmail({
+      bookingId: id,
+      reason: `El pago no se completó en ${ttlMinutes} minutos. Las fechas quedaron liberadas.`,
+      expiredUnpaid: true,
+      refundEligible: false,
+    }).catch(() => {
+      /* non-blocking */
     });
   }
 

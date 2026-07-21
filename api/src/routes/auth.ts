@@ -9,11 +9,15 @@ import {
   verifyResetToken,
   serializeUser,
 } from '../lib/auth.js';
-import { publicSiteUrl, sendEmail } from '../lib/email.js';
+import { publicSiteUrl } from '../lib/email.js';
 import { authenticate } from '../plugins/auth.js';
 import { requireTurnstile } from '../lib/auth-guards.js';
 import { verifyGoogleIdToken } from '../lib/google-auth.js';
-import { sendWelcomeEmail } from '../lib/marketing.js';
+import {
+  sendPasswordChangedEmail,
+  sendPasswordResetEmail,
+  sendWelcomeEmail,
+} from '../lib/transactional-emails.js';
 import {
   DEMO_ACCOUNT_BLOCKED_MESSAGE,
   isDemoAccountLoginBlocked,
@@ -203,6 +207,18 @@ export async function authRoutes(app: FastifyInstance) {
       data: { passwordHash },
     });
 
+    const user = await prisma.user.findUnique({
+      where: { id: request.auth!.sub },
+      select: { email: true, name: true },
+    });
+    if (user) {
+      sendPasswordChangedEmail({ email: user.email, name: user.name }).then((result) => {
+        if (!result.sent) {
+          request.log.warn({ reason: result.reason }, 'Password changed email not sent');
+        }
+      });
+    }
+
     return { success: true };
   });
 
@@ -228,21 +244,12 @@ export async function authRoutes(app: FastifyInstance) {
 
     const token = await signResetToken(user.id, user.email);
     const resetUrl = `${publicSiteUrl()}/auth/reset-password?token=${encodeURIComponent(token)}`;
-    const subject = 'Restablece tu contraseña — Eleveri';
-    const text = `
-Hola${user.name ? ` ${user.name}` : ''},
 
-Recibimos una solicitud para restablecer tu contraseña en Eleveri.
-
-Abre este enlace (válido 1 hora):
-${resetUrl}
-
-Si no solicitaste esto, ignora este correo.
-
-— Eleveri
-`.trim();
-
-    const result = await sendEmail({ to: user.email, subject, text });
+    const result = await sendPasswordResetEmail({
+      email: user.email,
+      name: user.name,
+      resetUrl,
+    });
     if (!result.sent) {
       request.log.warn({ reason: result.reason }, 'Password reset email not sent');
       return reply.status(503).send({
@@ -265,9 +272,16 @@ Si no solicitaste esto, ignora este correo.
     }
 
     const passwordHash = await hashPassword(body.data.password);
-    await prisma.user.update({
+    const user = await prisma.user.update({
       where: { id: payload.sub },
       data: { passwordHash },
+      select: { email: true, name: true },
+    });
+
+    sendPasswordChangedEmail({ email: user.email, name: user.name }).then((result) => {
+      if (!result.sent) {
+        request.log.warn({ reason: result.reason }, 'Password changed email not sent');
+      }
     });
 
     return { success: true };

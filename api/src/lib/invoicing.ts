@@ -1,6 +1,7 @@
 import { prisma } from './prisma.js';
 import { nightsBetween, type WanaFees } from './fees.js';
 import { buildAlegraInvoicePayload, createAlegraInvoice, getAlegraClient } from './alegra.js';
+import { sendInvoiceReceiptEmail } from './transactional-emails.js';
 
 export async function issueBookingInvoice(bookingId: string): Promise<void> {
   const booking = await prisma.booking.findUnique({
@@ -50,6 +51,9 @@ export async function issueBookingInvoice(bookingId: string): Promise<void> {
       guestName,
       error: 'Alegra credentials not configured',
     });
+    await sendInvoiceReceiptEmail({ bookingId }).catch((err) => {
+      console.error('[invoicing] Invoice receipt email failed', { bookingId, err });
+    });
     return;
   }
 
@@ -75,6 +79,10 @@ export async function issueBookingInvoice(bookingId: string): Promise<void> {
     ]);
 
     console.log('[invoicing] Alegra invoice issued', { bookingId, invoiceId: invoice.id });
+
+    sendInvoiceReceiptEmail({ bookingId, invoiceId: String(invoice.id) }).catch((err) => {
+      console.error('[invoicing] Invoice receipt email failed', { bookingId, err });
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error('[invoicing] Alegra failed', { bookingId, error: message });
@@ -86,6 +94,10 @@ export async function issueBookingInvoice(bookingId: string): Promise<void> {
       guestEmail,
       guestName,
       error: message,
+    });
+
+    await sendInvoiceReceiptEmail({ bookingId }).catch((err) => {
+      console.error('[invoicing] Invoice receipt email failed', { bookingId, err });
     });
   }
 }
@@ -156,6 +168,13 @@ export async function retryPendingInvoice(pendingInvoiceId: string): Promise<boo
         },
       }),
     ]);
+
+    sendInvoiceReceiptEmail({
+      bookingId: pending.bookingId,
+      invoiceId: String(invoice.id),
+    }).catch((err) => {
+      console.error('[invoicing] Invoice receipt email failed', { bookingId: pending.bookingId, err });
+    });
 
     return true;
   } catch (err) {
