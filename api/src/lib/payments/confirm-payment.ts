@@ -6,7 +6,11 @@ export async function confirmPaymentSuccess(params: {
   paymentId: string;
   externalId: string;
   raw?: unknown;
-}): Promise<{ bookingId: string; alreadyProcessed: boolean }> {
+}): Promise<{
+  bookingId: string;
+  alreadyProcessed: boolean;
+  refundRequired?: boolean;
+}> {
   const { paymentId, externalId, raw } = params;
 
   const result = await prisma.$transaction(async (tx) => {
@@ -16,12 +20,89 @@ export async function confirmPaymentSuccess(params: {
     }
 
     if (payment.status === 'succeeded') {
-      return { bookingId: payment.bookingId, alreadyProcessed: true, newlyConfirmed: false };
+      return {
+        bookingId: payment.bookingId,
+        alreadyProcessed: true,
+        newlyConfirmed: false,
+        refundRequired: false,
+      };
     }
 
     const booking = await tx.booking.findUnique({ where: { id: payment.bookingId } });
     if (!booking) {
       throw new Error('BOOKING_NOT_FOUND');
+    }
+
+    const existingMeta =
+      payment.metadata && typeof payment.metadata === 'object'
+        ? (payment.metadata as Record<string, unknown>)
+        : {};
+
+    if (booking.status === 'cancelled') {
+      await tx.payment.update({
+        where: { id: paymentId },
+        data: {
+          status: 'succeeded',
+          externalId,
+          metadata: {
+            ...existingMeta,
+            ...(raw ? { webhook_raw: raw } : {}),
+            refund_required: true,
+            confirmed_after_cancel: true,
+          },
+        },
+      });
+
+      await tx.paymentAttempt.create({
+        data: {
+          paymentId,
+          status: 'succeeded',
+          error: 'Booking was cancelled before payment confirmation',
+          raw: raw ? (raw as object) : undefined,
+        },
+      });
+
+      await tx.bookingEvent.create({
+        data: {
+          bookingId: booking.id,
+          fromStatus: 'cancelled',
+          toStatus: 'cancelled',
+          metadata: { paymentId, externalId, refund_required: true },
+        },
+      });
+
+      return {
+        bookingId: booking.id,
+        alreadyProcessed: false,
+        newlyConfirmed: false,
+        refundRequired: true,
+      };
+    }
+
+    if (booking.status !== 'pending_payment') {
+      await tx.payment.update({
+        where: { id: paymentId },
+        data: {
+          status: 'succeeded',
+          externalId,
+          metadata: raw ? (raw as object) : undefined,
+        },
+      });
+
+      await tx.paymentAttempt.create({
+        data: {
+          paymentId,
+          status: 'succeeded',
+          raw: raw ? (raw as object) : undefined,
+        },
+      });
+
+      return {
+        bookingId: booking.id,
+        alreadyProcessed: false,
+        newlyConfirmed: false,
+        refundRequired: false,
+      };
     }
 
     await tx.payment.update({
@@ -41,32 +122,37 @@ export async function confirmPaymentSuccess(params: {
       },
     });
 
-    const newlyConfirmed = booking.status === 'pending_payment';
+    assertTransition(booking.status, 'confirmed');
+    await tx.booking.update({
+      where: { id: booking.id },
+      data: { status: 'confirmed' },
+    });
+    await tx.bookingEvent.create({
+      data: {
+        bookingId: booking.id,
+        fromStatus: 'pending_payment',
+        toStatus: 'confirmed',
+        metadata: { paymentId, externalId },
+      },
+    });
 
-    if (newlyConfirmed) {
-      assertTransition(booking.status, 'confirmed');
-      await tx.booking.update({
-        where: { id: booking.id },
-        data: { status: 'confirmed' },
-      });
-      await tx.bookingEvent.create({
-        data: {
-          bookingId: booking.id,
-          fromStatus: 'pending_payment',
-          toStatus: 'confirmed',
-          metadata: { paymentId, externalId },
-        },
-      });
-    }
-
-    return { bookingId: booking.id, alreadyProcessed: false, newlyConfirmed };
+    return {
+      bookingId: booking.id,
+      alreadyProcessed: false,
+      newlyConfirmed: true,
+      refundRequired: false,
+    };
   });
 
   if (!result.alreadyProcessed && result.newlyConfirmed) {
     void onBookingConfirmed(result.bookingId);
   }
 
-  return { bookingId: result.bookingId, alreadyProcessed: result.alreadyProcessed };
+  return {
+    bookingId: result.bookingId,
+    alreadyProcessed: result.alreadyProcessed,
+    refundRequired: result.refundRequired,
+  };
 }
 
 export async function markPaymentFailed(paymentId: string, error: string, raw?: unknown) {

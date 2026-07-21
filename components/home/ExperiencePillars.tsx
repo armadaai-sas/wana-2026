@@ -35,8 +35,8 @@ export default function ExperiencePillars() {
       </div>
       <div className="wana-container relative py-16 lg:py-24">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="wana-eyebrow">Por qué Waná</p>
-          <h2 className="mt-4 font-display text-2xl text-wana-charcoal sm:text-3xl lg:text-4xl">
+          <p className="wana-eyebrow">Por qué Eleveri</p>
+          <h2 className="wana-display-section mt-4 text-wana-charcoal">
             Más que un alojamiento, una experiencia
           </h2>
           <div className="wana-divider-gold mx-auto mt-5" />
@@ -64,7 +64,7 @@ export default function ExperiencePillars() {
         </div>
         <div className="mt-12 text-center">
           <Link href="/properties/glamping-wana" className="wana-btn-primary inline-flex min-h-[48px] !px-8">
-            Reservar Glamping Waná
+            Reservar ahora
           </Link>
         </div>
       </div>

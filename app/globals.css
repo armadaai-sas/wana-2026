@@ -68,6 +68,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'kern' 1, 'liga' 1;
+    overflow-x: hidden;
   }
 
   ::selection {
@@ -105,11 +106,87 @@
   }
 
   .wana-eyebrow {
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     font-weight: 700;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
     color: var(--wana-champagne-dark);
+  }
+
+  @media (width >= 640px) {
+    .wana-eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.26em;
+    }
+  }
+
+  /* Hero / marketing eyebrows — un poco más legible en móvil y tablet */
+  .wana-eyebrow-lux {
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+  }
+
+  @media (width >= 640px) {
+    .wana-eyebrow-lux {
+      font-size: 0.8125rem;
+      letter-spacing: 0.24em;
+    }
+  }
+
+  @media (width >= 1024px) {
+    .wana-eyebrow-lux {
+      font-size: 0.875rem;
+      letter-spacing: 0.26em;
+    }
+  }
+
+  /* Títulos editoriales — estilo exclusivo 2026 */
+  .wana-display-hero {
+    font-family: var(--font-display), 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(1.875rem, 4.2vw + 0.65rem, 3.625rem);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
+    text-wrap: balance;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+  }
+
+  .wana-display-hero--light {
+    color: #ffffff;
+    text-shadow: 0 2px 28px rgba(0, 0, 0, 0.32);
+  }
+
+  .wana-display-section {
+    font-family: var(--font-display), 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(1.5rem, 2.2vw + 0.85rem, 2.625rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    text-wrap: balance;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+  }
+
+  .wana-display-section--light {
+    color: #ffffff;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.28);
+  }
+
+  .wana-display-page {
+    font-family: var(--font-display), 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(1.875rem, 2.8vw + 0.75rem, 3.125rem);
+    font-weight: 500;
+    letter-spacing: -0.032em;
+    line-height: 1.08;
+    text-wrap: balance;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+  }
+
+  :where(.font-display) {
+    font-weight: 500;
+    letter-spacing: -0.028em;
+    line-height: 1.1;
+    text-wrap: balance;
+    font-feature-settings: 'kern' 1, 'liga' 1;
   }
 
   .wana-link {
@@ -218,15 +295,17 @@
   }
 
   .wana-section-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    letter-spacing: -0.025em;
+    font-family: var(--font-display), 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.375rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
     color: var(--wana-charcoal);
   }
 
   @media (width >= 640px) {
     .wana-section-title {
-      font-size: 1.5rem;
+      font-size: 1.625rem;
     }
   }
 
@@ -288,11 +367,19 @@
 
   .wana-header-nav-link {
     border-radius: 9999px;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
+    padding: 0.5rem 0.625rem;
+    font-size: 0.8125rem;
     font-weight: 500;
+    white-space: nowrap;
     color: rgba(255, 255, 255, 0.72);
     transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  @media (width >= 1280px) {
+    .wana-header-nav-link {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+    }
   }
 
   .wana-header-nav-link:hover {
@@ -361,6 +448,15 @@
   .wana-header-mobile-panel {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     background: var(--wana-black-soft);
+    max-height: calc(100dvh - 3.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  @media (width >= 640px) {
+    .wana-header-mobile-panel {
+      max-height: calc(100dvh - 4rem);
+    }
   }
 
   #buscar {
@@ -585,9 +681,12 @@
   }
 
   .wana-search-luxury {
-    border-radius: 1.25rem;
-    background: rgba(255, 255, 255, 0.97);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.12);
+    border-radius: 1.5rem;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.04),
+      0 24px 48px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(20px);
   }
 
@@ -596,20 +695,36 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-    min-height: 64px;
-    padding: 0.75rem 1rem;
+    min-height: 56px;
+    padding: 0.65rem 1rem;
     text-align: left;
     border-radius: 1rem;
-    transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  @media (width >= 768px) {
+    .wana-search-field {
+      min-height: 64px;
+      padding: 0.75rem 1.1rem;
+      border-radius: 0;
+    }
   }
 
   .wana-search-field:hover {
-    background: rgba(244, 241, 234, 0.65);
+    background: rgba(244, 241, 234, 0.55);
   }
 
   .wana-search-field-active {
-    background: rgba(240, 239, 237, 0.95);
-    box-shadow: inset 0 0 0 2px var(--wana-black);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: inset 0 0 0 2px var(--wana-charcoal);
+    border-radius: 1rem;
+  }
+
+  @media (width >= 768px) {
+    .wana-search-field-active {
+      border-radius: 1rem;
+      margin: 4px;
+    }
   }
 
   .wana-search-label {
@@ -634,11 +749,20 @@
   }
 
   .wana-dropdown-panel {
-    border-radius: 1rem;
-    border: 1px solid var(--wana-border);
+    border-radius: 1.25rem;
+    border: 1px solid rgba(229, 227, 223, 0.9);
     background: white;
-    padding: 1rem;
-    box-shadow: 0 20px 50px rgba(15, 31, 24, 0.18);
+    padding: 1rem 1.1rem;
+    box-shadow:
+      0 12px 28px rgba(15, 31, 24, 0.12),
+      0 4px 12px rgba(0, 0, 0, 0.06),
+      0 0 0 1px rgba(0, 0, 0, 0.03);
+  }
+
+  @media (width >= 768px) {
+    .wana-dropdown-panel {
+      padding: 1.15rem 1.25rem;
+    }
   }
 
   .wana-dropdown-title {
@@ -674,26 +798,27 @@
     align-items: center;
     gap: 0.45rem;
     min-height: 44px;
-    padding: 0.5rem 1rem;
+    padding: 0.55rem 1rem;
     border-radius: 9999px;
     border: 1px solid var(--wana-border);
     background: white;
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--wana-charcoal);
-    transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+    white-space: nowrap;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .wana-category-chip:hover {
     border-color: var(--wana-gold);
-    box-shadow: var(--wana-shadow);
-    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
   }
 
   .wana-category-chip-active {
-    border-color: var(--wana-black);
-    background: rgba(0, 0, 0, 0.05);
-    color: var(--wana-black);
+    border-color: var(--wana-charcoal);
+    background: var(--wana-charcoal);
+    color: white;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   }
 
   .wana-stepper-btn {

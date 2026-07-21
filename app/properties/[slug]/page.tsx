@@ -6,6 +6,7 @@ import PropertyJsonLd from '@/components/analytics/PropertyJsonLd';
 import PropertyViewTracker from '@/components/analytics/PropertyViewTracker';
 import ExclusiveBadge from '@/components/ExclusiveBadge';
 import PropertyLocation from '@/components/booking/PropertyLocation';
+import EleveriMark from '@/components/brand/EleveriMark';
 import { formatPropertyLocation } from '@/lib/property-location';
 import { wanaApi } from '@/lib/api-client';
 import { notFound } from 'next/navigation';
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   try {
     const property = await wanaApi.getProperty(slug);
-    const description = property.description?.slice(0, 160) ?? 'Reserva en Waná';
+    const description = property.description?.slice(0, 160) ?? 'Reserva en Eleveri';
     return {
       title: property.title,
       description,
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }: PageProps) {
       },
     };
   } catch {
-    return { title: 'Propiedad | Waná' };
+    return { title: 'Propiedad | Eleveri' };
   }
 }
 
@@ -77,7 +78,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
                 </span>
               )}
             </div>
-            <h1 className="font-display text-2xl text-wana-charcoal sm:text-3xl lg:text-4xl">
+            <h1 className="wana-display-section text-wana-charcoal">
               {property.title}
             </h1>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-wana-muted">
@@ -104,11 +105,11 @@ export default async function PropertyDetailPage({ params }: PageProps) {
             <div className="space-y-10 min-w-0">
               <section>
                 <div className="flex items-center gap-4 rounded-2xl border border-wana-border bg-gradient-to-br from-white to-wana-cream p-5 shadow-sm ring-1 ring-wana-gold/10">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-wana-forest to-wana-forest-light font-display text-xl text-white shadow-sm ring-2 ring-wana-gold/25">
-                    W
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-wana-black p-2.5 shadow-sm ring-2 ring-wana-gold/25">
+                    <EleveriMark className="h-full w-full" plain />
                   </div>
                   <div>
-                    <p className="font-semibold text-wana-charcoal">Anfitrión Waná verificado</p>
+                    <p className="font-semibold text-wana-charcoal">Anfitrión Eleveri verificado</p>
                     <p className="text-sm text-wana-muted">Experiencia glamping curada · respuesta rápida</p>
                   </div>
                 </div>

@@ -19,7 +19,7 @@ export async function sendEmail(params: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: process.env.RESEND_FROM ?? 'Waná <reservas@wana.co>',
+      from: process.env.RESEND_FROM ?? 'Eleveri <reservas@eleveri.app>',
       to: params.to,
       subject: params.subject,
       text: params.text,

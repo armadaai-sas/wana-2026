@@ -9,6 +9,7 @@ import { es } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { wanaApi, type BookingQuote } from '@/lib/api-client';
+import { isValidStayRange, stayRangeError } from '@/lib/booking-dates';
 import { useAuth } from '@/hooks/useAuth';
 import 'react-day-picker/dist/style.css';
 
@@ -84,6 +85,7 @@ export default function BookingWidget({
   const [blockedRanges, setBlockedRanges] = useState<Array<{ start: string; end: string }>>([]);
   const [showCalendar, setShowCalendar] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dateError, setDateError] = useState<string | null>(null);
   const { user, loading: authLoading } = useAuth();
   const pathname = usePathname();
   const loginRedirect = `${pathname}?book=1`;
@@ -118,7 +120,7 @@ export default function BookingWidget({
   }, [blockedRanges]);
 
   const fetchQuote = useCallback(async () => {
-    if (!range?.from || !range?.to) {
+    if (!isValidStayRange(range)) {
       setQuote(null);
       return;
     }
@@ -143,8 +145,17 @@ export default function BookingWidget({
     fetchQuote();
   }, [fetchQuote]);
 
+  const handleRangeSelect = (next: DateRange | undefined) => {
+    setRange(next);
+    const error = stayRangeError(next);
+    setDateError(error);
+    if (error) setQuote(null);
+  };
+
   const handleReserve = async () => {
-    if (!range?.from || !range?.to || !quote?.available) return;
+    if (!isValidStayRange(range) || !quote?.available) return;
+
+    if (authLoading) return;
 
     if (!user) {
       toast.error('Inicia sesión para reservar');
@@ -173,7 +184,7 @@ export default function BookingWidget({
   };
 
   const nights = quote?.nights ?? 0;
-  const canReserve = quote?.available && nights > 0 && !quoteLoading && !bookingLoading;
+  const canReserve = isValidStayRange(range) && quote?.available && nights > 0 && !quoteLoading && !bookingLoading && !dateError;
   const totalDisplay =
     quote?.available && quote.fees
       ? formatMoney(quote.fees.total_charge_to_guest, currency)
@@ -222,7 +233,7 @@ export default function BookingWidget({
               <DayPicker
                 mode="range"
                 selected={range}
-                onSelect={setRange}
+                onSelect={handleRangeSelect}
                 disabled={[{ before: new Date() }, ...disabledDays]}
                 numberOfMonths={1}
                 locale={es}
@@ -232,7 +243,13 @@ export default function BookingWidget({
         )}
       </AnimatePresence>
 
-      {quote && !quote.available && (
+      {dateError && (
+        <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {dateError}
+        </p>
+      )}
+
+      {quote && !quote.available && !dateError && (
         <p className="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
           Estas fechas no están disponibles. Prueba otro rango.
         </p>

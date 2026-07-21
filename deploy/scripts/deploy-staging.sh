@@ -52,11 +52,23 @@ echo "→ Build API..."
 docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build api
 
 echo "→ Build Web..."
-if [[ "${BUILD_NO_CACHE:-}" == "1" ]]; then
-  docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build --no-cache web
-else
-  docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build web
-fi
+build_web() {
+  if [[ "${BUILD_NO_CACHE:-}" == "1" ]]; then
+    docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build --no-cache web
+  else
+    docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build web
+  fi
+}
+attempt=1
+until build_web; do
+  if [[ $attempt -ge 3 ]]; then
+    echo "Error: build web falló tras 3 intentos"
+    exit 1
+  fi
+  echo "   Reintentando build web ($attempt/3)..."
+  attempt=$((attempt + 1))
+  sleep 5
+done
 
 echo "→ Limpiar imágenes Docker huérfanas..."
 docker image prune -f 2>/dev/null || true

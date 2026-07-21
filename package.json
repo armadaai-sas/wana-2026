@@ -20,18 +20,19 @@
     "go-live:remote": "./deploy/scripts/remote-deploy.sh",
     "go-live:staging": "./deploy/scripts/deploy-staging.sh",
     "go-live:verify": "./deploy/scripts/verify-health.sh",
+    "go-live:smoke:mock": "./deploy/scripts/mock-booking-smoke.sh",
+    "check:turnstile": "./deploy/scripts/check-turnstile-config.sh",
     "api:dev": "cd api && npm run dev",
     "api:migrate": "cd api && npx prisma migrate deploy",
-    "api:seed": "cd api && npx prisma db seed"
+    "api:seed": "cd api && npx prisma db seed",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@google-cloud/vision": "^5.3.6",
     "@hookform/resolvers": "^5.4.0",
     "@netlify/plugin-nextjs": "^5.15.11",
     "@opentelemetry/api": "^1.9.1",
-    "@supabase/auth-helpers-nextjs": "^0.7.1",
-    "@supabase/ssr": "^0.10.3",
-    "@supabase/supabase-js": "^2.106.2",
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^5.10.0",
     "@upstash/ratelimit": "^0.1.0",
@@ -39,6 +40,7 @@
     "date-fns": "^4.4.0",
     "dotenv": "^17.4.2",
     "framer-motion": "^12.40.0",
+    "jose": "^5.10.0",
     "next": "^16.2.6",
     "react": "^19.2.6",
     "react-day-picker": "^10.0.1",
@@ -48,6 +50,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/node": "25.9.1",
     "@types/react": "19.2.15",

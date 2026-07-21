@@ -40,7 +40,7 @@ export default async function HomePage() {
               <div className="mb-10 flex items-end justify-between gap-4">
                 <div>
                   <p className="wana-eyebrow">Selección</p>
-                  <h2 className="mt-3 font-display text-2xl text-wana-charcoal sm:text-3xl lg:text-4xl">
+                  <h2 className="wana-display-section mt-3 text-wana-charcoal">
                     Destacados esta semana
                   </h2>
                   <p className="mt-3 text-wana-muted">Espacios con la mejor valoración de huéspedes</p>
@@ -79,19 +79,19 @@ export default async function HomePage() {
 
         <CinematicBand image="/properties/glamping-wana/05.webp" alt="Montañas de Sutatausa" overlay="dark">
           <div className="wana-container py-16 sm:py-20 text-center text-white">
-            <p className="wana-eyebrow !text-wana-gold-light">Sabana de Bogotá</p>
-            <h2 className="mt-4 font-display text-2xl sm:text-3xl lg:text-4xl max-w-2xl mx-auto">
+            <p className="wana-eyebrow wana-eyebrow-lux !text-wana-gold-light">Sabana de Bogotá</p>
+            <h2 className="wana-display-section wana-display-section--light mt-4 max-w-2xl mx-auto">
               Amaneceres en la montaña, noches bajo las estrellas
             </h2>
             <p className="mt-4 max-w-lg mx-auto text-white/80 leading-relaxed">
-              Glamping Waná en Sutatausa y Cucunubá — silencio, naturaleza y confort a poca distancia
+              Espacios exclusivos en Sutatausa y Cucunubá — silencio, naturaleza y confort a poca distancia
               de la ciudad.
             </p>
             <Link
               href="/properties/glamping-wana"
               className="mt-8 inline-flex min-h-[48px] items-center rounded-full bg-white px-8 py-3 text-sm font-semibold text-wana-charcoal shadow-lg transition hover:bg-wana-gold-light"
             >
-              Ver Glamping Waná
+              Ver espacio destacado
             </Link>
           </div>
         </CinematicBand>
@@ -107,7 +107,7 @@ export default async function HomePage() {
           >
             <div className="px-8 py-14 text-center text-white sm:px-14 sm:py-16">
               <p className="wana-eyebrow !text-wana-gold-light">Tu próximo escape</p>
-              <h2 className="mt-4 font-display text-2xl sm:text-3xl lg:text-4xl">
+              <h2 className="wana-display-section wana-display-section--light mt-4">
                 ¿Listo para desconectar?
               </h2>
               <p className="mt-4 max-w-lg mx-auto text-white/80 leading-relaxed">

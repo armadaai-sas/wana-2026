@@ -2,25 +2,34 @@
 
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Logo from '@/components/Logo';
 import { useAuth } from '@/hooks/useAuth';
 
 /** Cada enlace va a un destino distinto — sin duplicar /properties */
 const navLinks = [
-  { href: '/properties', label: 'Colección', match: (p: string) => p === '/properties' || (p.startsWith('/properties') && !p.includes('glamping-wana')) },
-  { href: '/properties/glamping-wana', label: 'Glamping Waná', match: (p: string) => p.startsWith('/properties/glamping-wana') },
-  { href: '/host/add-property', label: 'Publicar', match: (p: string) => p.startsWith('/host/add-property') },
-  { href: '/legal/faq', label: 'FAQ', match: (p: string) => p.startsWith('/legal/faq') },
+  { href: '/properties', label: 'Colección', shortLabel: 'Colección', match: (p: string) => p === '/properties' || (p.startsWith('/properties') && !p.includes('glamping-wana')) },
+  { href: '/properties/glamping-wana', label: 'Glamping destacado', shortLabel: 'Destacado', match: (p: string) => p.startsWith('/properties/glamping-wana') },
+  { href: '/host/add-property', label: 'Publicar', shortLabel: 'Publicar', match: (p: string) => p.startsWith('/host/add-property') },
+  { href: '/legal/faq', label: 'FAQ', shortLabel: 'FAQ', match: (p: string) => p.startsWith('/legal/faq') },
 ] as const;
-
-const BOOK_URL = '/properties/glamping-wana';
 
 export default function Header({ sticky = true }: { sticky?: boolean }) {
   const { user, logout, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
 
   const handleLogout = () => {
     logout();
@@ -30,15 +39,19 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
 
   const closeMenu = () => setMenuOpen(false);
 
-  const isHome = pathname === '/';
-  const bookHref = isHome ? '/#buscar' : BOOK_URL;
-
   return (
-    <header className={`wana-header z-50 ${sticky ? 'sticky top-0' : ''}`}>
-      <div className="wana-container flex h-[4.25rem] items-center justify-between gap-3 sm:gap-4">
-        <Logo onDark />
+    <header className={`wana-header z-50 overflow-x-clip ${sticky ? 'sticky top-0' : ''}`}>
+      <div className="wana-container grid h-14 min-h-[3.5rem] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:h-16 lg:h-[4.25rem] lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-4">
+        <div className="flex min-w-0 items-center justify-self-start">
+          <span className="lg:hidden">
+            <Logo compact onDark />
+          </span>
+          <span className="hidden lg:inline-flex">
+            <Logo onDark />
+          </span>
+        </div>
 
-        <nav className="hidden items-center gap-0.5 md:flex">
+        <nav className="hidden min-w-0 items-center justify-center gap-0.5 lg:flex xl:gap-1">
           {navLinks.map((link) => {
             const active = link.match(pathname);
             return (
@@ -47,7 +60,8 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
                 href={link.href}
                 className={`wana-header-nav-link ${active ? 'wana-header-nav-link-active' : ''}`}
               >
-                {link.label}
+                <span className="xl:hidden">{link.shortLabel}</span>
+                <span className="hidden xl:inline">{link.label}</span>
               </Link>
             );
           })}
@@ -69,17 +83,32 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
           )}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <Link
-            href={bookHref}
-            className="hidden sm:inline-flex wana-btn-primary !px-5 !py-2.5 text-sm"
-          >
-            {isHome ? 'Buscar fechas' : 'Reservar ahora'}
-          </Link>
+        <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2">
+          {!loading && user ? (
+            <>
+              <Link href="/account" className="wana-header-account hidden max-w-[7rem] lg:inline xl:max-w-[9rem]">
+                {user.name ?? user.email}
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="wana-btn-ghost hidden !px-3 !py-2 text-sm lg:inline-flex xl:!px-4"
+              >
+                Salir
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/auth/login"
+              className="wana-btn-ghost hidden !px-3 !py-2 text-sm lg:inline-flex xl:!px-4"
+            >
+              Iniciar sesión
+            </Link>
+          )}
 
           <button
             type="button"
-            className="wana-header-menu-btn md:hidden"
+            className="wana-header-menu-btn lg:hidden"
             aria-expanded={menuOpen}
             aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
             onClick={() => setMenuOpen((o) => !o)}
@@ -92,34 +121,12 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
               )}
             </svg>
           </button>
-
-          {!loading && user ? (
-            <>
-              <Link href="/account" className="wana-header-account hidden sm:inline">
-                {user.name ?? user.email}
-              </Link>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="wana-btn-ghost !px-4 !py-2 text-sm hidden sm:inline-flex"
-              >
-                Salir
-              </button>
-            </>
-          ) : (
-            <Link
-              href="/auth/login"
-              className="wana-btn-ghost !px-4 !py-2 text-sm hidden sm:inline-flex"
-            >
-              Iniciar sesión
-            </Link>
-          )}
         </div>
       </div>
 
       {menuOpen && (
-        <div className="wana-header-mobile-panel md:hidden">
-          <nav className="wana-container flex flex-col gap-1 py-4">
+        <div className="wana-header-mobile-panel lg:hidden">
+          <nav className="wana-container flex max-h-[calc(100dvh-3.5rem)] flex-col gap-1 overflow-y-auto py-4 sm:max-h-[calc(100dvh-4rem)]">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -152,13 +159,6 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
                 Admin
               </Link>
             )}
-            <Link
-              href={bookHref}
-              onClick={closeMenu}
-              className="wana-btn-primary mt-2 justify-center"
-            >
-              {isHome ? 'Buscar fechas' : 'Reservar ahora'}
-            </Link>
             {!loading && user ? (
               <>
                 <Link
@@ -166,7 +166,7 @@ export default function Header({ sticky = true }: { sticky?: boolean }) {
                   onClick={closeMenu}
                   className="rounded-xl px-4 py-3 text-sm text-white/85 min-h-[44px] hover:bg-white/8"
                 >
-                  Mi cuenta
+                  Mi cuenta{user.name ? ` · ${user.name}` : ''}
                 </Link>
                 <button
                   type="button"

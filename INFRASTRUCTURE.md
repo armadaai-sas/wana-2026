@@ -101,11 +101,11 @@ Env: `ALEGRA_EMAIL`, `ALEGRA_API_TOKEN`. Sin credenciales → `pending_invoices`
 - Migrations: `api/prisma/migrations/`
 - Unified model: `properties` (replaces legacy `domos` + `properties` split)
 
-## Legacy stack (being migrated)
+## Legacy stack (removed Jul 2026)
 
-- **Supabase:** `utils/supabase/`, `supabaseClient.js` — admin and legacy routes
-- **Netlify:** `netlify.toml` — replace with Docker deployment in Phase 1+
-- **Payments (mock):** `actions/payment-actions.ts` — migrate to API in Phase 2
+- ~~Supabase client, server actions, Next `/api/*` stubs~~ — eliminado; usar solo Fastify `/api/v1`
+- **Netlify:** `netlify.toml` — optional; producción usa Docker
+- **Pagos mock:** checkout vía `wanaApi` + API Fastify
 
 ## Environment
 

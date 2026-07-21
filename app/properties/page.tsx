@@ -1,6 +1,9 @@
+import Link from 'next/link';
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
+import EmptyState from '@/components/ui/EmptyState';
 import { wanaApi } from '@/lib/api-client';
+import { humanizeApiError } from '@/lib/api-errors';
 
 export const revalidate = 60;
 
@@ -30,6 +33,8 @@ export default async function PropertiesPage({
       limit: 24,
       city,
       guests: guests && guests > 0 ? guests : undefined,
+      check_in: checkIn,
+      check_out: checkOut,
     });
     properties = data;
   } catch (e) {
@@ -47,7 +52,7 @@ export default async function PropertiesPage({
           <div className="wana-container py-10 lg:py-14">
             <header className="max-w-2xl">
               <p className="wana-eyebrow">Colección</p>
-              <h1 className="mt-3 font-display text-3xl text-wana-charcoal sm:text-4xl lg:text-5xl">
+              <h1 className="wana-display-page mt-3 text-wana-charcoal">
                 Espacios únicos en Colombia
               </h1>
               <div className="wana-divider-gold mt-5" />
@@ -64,7 +69,7 @@ export default async function PropertiesPage({
                   )}
                   {checkIn && checkOut && (
                     <span className="block mt-1 text-wana-muted">
-                      Las fechas se aplican al reservar en cada propiedad.
+                      Mostrando espacios disponibles para esas fechas.
                     </span>
                   )}
                 </p>
@@ -82,22 +87,30 @@ export default async function PropertiesPage({
         <div className="wana-container py-10 lg:py-12">
 
           {error ? (
-            <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-800">
-              Error cargando propiedades: {error}
-            </div>
-          ) : properties.length === 0 ? (
-            <div className="rounded-2xl border border-wana-border bg-wana-cream/50 p-12 text-center">
-              <p className="text-wana-muted">
-                {hasFilters
-                  ? 'No hay propiedades con esos filtros.'
-                  : 'No hay propiedades publicadas.'}
-              </p>
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-amber-950">
+              <p className="font-semibold">No pudimos cargar la colección</p>
+              <p className="mt-2 text-sm leading-relaxed">{humanizeApiError(error)}</p>
               {hasFilters && (
-                <a href="/properties" className="mt-4 inline-flex text-sm font-medium text-wana-forest hover:underline">
-                  Ver todas →
-                </a>
+                <Link
+                  href="/properties"
+                  className="wana-link mt-4 inline-block text-sm font-medium"
+                >
+                  Ver todas las propiedades
+                </Link>
               )}
             </div>
+          ) : properties.length === 0 ? (
+            <EmptyState
+              emoji={hasFilters ? '🔍' : '🏕️'}
+              title={hasFilters ? 'Sin resultados' : 'Próximamente más espacios'}
+              description={
+                hasFilters
+                  ? 'No encontramos propiedades con esos filtros. Prueba otra ciudad o explora toda la colección.'
+                  : 'Estamos incorporando nuevos glampings. Vuelve pronto o publica tu espacio como anfitrión.'
+              }
+              actionLabel={hasFilters ? 'Ver todas las propiedades' : 'Explorar anfitrión'}
+              actionHref={hasFilters ? '/properties' : '/become-host'}
+            />
           ) : (
             <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {properties.map((property) => (

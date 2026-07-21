@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Política de privacidad | Waná',
+  title: 'Política de privacidad | Eleveri',
 };
 
 export default function PrivacyPage() {
@@ -13,7 +13,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-semibold text-wana-charcoal">1. Responsable</h2>
           <p className="mt-2">
-            Glamping Waná («Waná») opera la plataforma de reservas de experiencias de glamping y
+            Eleveri opera la plataforma de reservas de experiencias de glamping y
             refugios en Colombia. Para consultas sobre privacidad puedes contactarnos en
             hola@glampingwana.com.
           </p>

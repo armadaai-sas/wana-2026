@@ -18,7 +18,7 @@ export async function sendBookingConfirmationEmail(bookingId: string): Promise<v
   const body = `
 Hola ${booking.guestName ?? 'huésped'},
 
-Tu reserva en Waná está confirmada.
+Tu reserva en Eleveri está confirmada.
 
 Propiedad: ${booking.property.title}
 Ciudad: ${booking.property.city ?? 'Colombia'}
@@ -28,7 +28,7 @@ Huéspedes: ${booking.guests}
 
 Ver detalles: ${siteUrl}/checkout/${booking.id}/success?property=${booking.property.slug}
 
-— Waná Glamping
+— Eleveri
 `.trim();
 
   await sendEmail({
@@ -36,6 +36,42 @@ Ver detalles: ${siteUrl}/checkout/${booking.id}/success?property=${booking.prope
     subject,
     text: body,
   });
+}
+
+export async function sendWelcomeEmail(params: {
+  email: string;
+  name: string | null;
+  role: 'guest' | 'host' | 'admin';
+}): Promise<{ sent: boolean; reason?: string }> {
+  if (params.email.endsWith('@wana.local')) {
+    return { sent: false, reason: 'demo account skipped' };
+  }
+
+  const siteUrl = publicSiteUrl();
+  const firstName = params.name?.trim().split(/\s+/)[0] ?? 'ahí';
+  const exploreUrl = params.role === 'host' ? `${siteUrl}/host` : `${siteUrl}/properties`;
+  const roleHint =
+    params.role === 'host'
+      ? 'Como anfitrión, ya puedes publicar tu espacio y recibir reservas.'
+      : 'Explora glampings únicos en Colombia y reserva tu próxima escapada.';
+
+  const subject = 'Bienvenido a Eleveri';
+  const text = `
+Hola ${firstName},
+
+¡Gracias por crear tu cuenta en Eleveri!
+
+${roleHint}
+
+Explorar espacios: ${exploreUrl}
+Tu cuenta: ${siteUrl}/account
+
+¿Necesitas ayuda? Responde a este correo o visita ${siteUrl}/legal/faq
+
+— Eleveri
+`.trim();
+
+  return sendEmail({ to: params.email, subject, text });
 }
 
 export async function sendMetaPurchaseEvent(bookingId: string): Promise<void> {

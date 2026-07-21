@@ -3,7 +3,7 @@ import Logo from '@/components/Logo';
 
 const exploreLinks = [
   { href: '/properties', label: 'Colección completa' },
-  { href: '/properties/glamping-wana', label: 'Glamping Waná' },
+  { href: '/properties/glamping-wana', label: 'Glamping destacado' },
   { href: '/#buscar', label: 'Buscar fechas' },
   { href: '/legal/faq', label: 'Preguntas frecuentes' },
 ] as const;
@@ -77,7 +77,7 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/12 pt-8 sm:flex-row">
           <p className="text-sm text-white/65">
-            © {new Date().getFullYear()} Waná Glamping. Todos los derechos reservados.
+            © {new Date().getFullYear()} Eleveri. Todos los derechos reservados.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
             <Link href="/auth/login" className="wana-footer-link">

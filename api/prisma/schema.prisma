@@ -57,6 +57,13 @@ enum AvailabilitySource {
   booking
   manual
   maintenance
+  ota_airbnb
+  ota_booking
+}
+
+enum CalendarFeedChannel {
+  airbnb
+  booking
 }
 
 enum InvoiceStatus {
@@ -97,9 +104,10 @@ model Property {
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
 
-  host               User                @relation("HostProperties", fields: [hostId], references: [id])
+  host               User                  @relation("HostProperties", fields: [hostId], references: [id])
   media              PropertyMedia[]
   availabilityBlocks AvailabilityBlock[]
+  calendarFeeds      PropertyCalendarFeed[]
   bookings           Booking[]
   reviews            Review[]
 
@@ -126,19 +134,40 @@ model PropertyMedia {
 }
 
 model AvailabilityBlock {
-  id         String             @id @default(uuid())
-  propertyId String             @map("property_id")
-  startDate  DateTime           @map("start_date") @db.Date
-  endDate    DateTime           @map("end_date") @db.Date
-  source     AvailabilitySource @default(booking)
-  bookingId  String?            @map("booking_id")
-  createdAt  DateTime           @default(now()) @map("created_at")
+  id          String             @id @default(uuid())
+  propertyId  String             @map("property_id")
+  startDate   DateTime           @map("start_date") @db.Date
+  endDate     DateTime           @map("end_date") @db.Date
+  source      AvailabilitySource @default(booking)
+  bookingId   String?            @map("booking_id")
+  externalUid String?            @map("external_uid")
+  createdAt   DateTime           @default(now()) @map("created_at")
 
   property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   booking  Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
 
+  @@unique([propertyId, source, externalUid])
   @@index([propertyId, startDate, endDate])
   @@map("availability_blocks")
+}
+
+model PropertyCalendarFeed {
+  id                 String              @id @default(uuid())
+  propertyId         String              @map("property_id")
+  channel            CalendarFeedChannel
+  importUrl          String              @map("import_url")
+  enabled            Boolean             @default(true)
+  lastSyncedAt       DateTime?           @map("last_synced_at")
+  lastError          String?             @map("last_error")
+  eventCountLastSync Int?                @map("event_count_last_sync")
+  skippedLastSync    Int?                @map("skipped_last_sync")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, channel])
+  @@map("property_calendar_feeds")
 }
 
 model Booking {

@@ -1,9 +1,17 @@
 import type { FastifyInstance } from 'fastify';
+import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
+import { apiErrorBody, ApiErrorCode, maxGuestsError } from '../lib/api-errors.js';
 import { isPropertyAvailable } from '../lib/availability.js';
 import { calculateWanaFees, nightsBetween } from '../lib/fees.js';
 import { assertTransition } from '../lib/booking-state.js';
+import {
+  createBookingWithAvailabilityBlock,
+  isAvailabilityConflictError,
+} from '../lib/reserve-availability.js';
+import { calculateCancellationRefund } from '../lib/cancellation-policy.js';
+import { issuePaymentRefund } from '../lib/refund-payment.js';
 import { authenticate } from '../plugins/auth.js';
 
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -37,7 +45,7 @@ export async function bookingRoutes(app: FastifyInstance) {
     const checkOut = parseDateUTC(check_out);
 
     if (checkOut <= checkIn) {
-      return reply.status(400).send({ error: 'check_out must be after check_in' });
+      return reply.status(400).send(apiErrorBody(ApiErrorCode.INVALID_DATE_RANGE));
     }
 
     const property = await prisma.property.findUnique({ where: { id: property_id } });
@@ -46,7 +54,7 @@ export async function bookingRoutes(app: FastifyInstance) {
     }
 
     if (guests > property.maxGuests) {
-      return reply.status(400).send({ error: `Max guests is ${property.maxGuests}` });
+      return reply.status(400).send(maxGuestsError(property.maxGuests));
     }
 
     const nights = nightsBetween(checkIn, checkOut);
@@ -80,7 +88,7 @@ export async function bookingRoutes(app: FastifyInstance) {
     const checkOut = parseDateUTC(data.check_out);
 
     if (checkOut <= checkIn) {
-      return reply.status(400).send({ error: 'check_out must be after check_in' });
+      return reply.status(400).send(apiErrorBody(ApiErrorCode.INVALID_DATE_RANGE));
     }
 
     const existing = await prisma.booking.findUnique({
@@ -96,68 +104,45 @@ export async function bookingRoutes(app: FastifyInstance) {
     }
 
     if (data.guests > property.maxGuests) {
-      return reply.status(400).send({ error: `Max guests is ${property.maxGuests}` });
+      return reply.status(400).send(maxGuestsError(property.maxGuests));
     }
 
     const nights = nightsBetween(checkIn, checkOut);
     const fees = calculateWanaFees(Number(property.pricePerNight), nights);
 
     try {
-      const booking = await prisma.$transaction(async (tx) => {
-        const overlap = await tx.availabilityBlock.findFirst({
-          where: {
-            propertyId: data.property_id,
-            startDate: { lt: checkOut },
-            endDate: { gt: checkIn },
-          },
-        });
-
-        if (overlap) {
-          throw new Error('DATES_NOT_AVAILABLE');
-        }
-
-        const created = await tx.booking.create({
-          data: {
-            propertyId: data.property_id,
-            guestId,
-            checkIn,
-            checkOut,
-            guests: data.guests,
-            status: 'pending_payment',
-            feesBreakdown: fees as object,
-            idempotencyKey: data.idempotency_key,
-            guestEmail,
-            guestName,
-          },
-        });
-
-        await tx.availabilityBlock.create({
-          data: {
-            propertyId: data.property_id,
-            startDate: checkIn,
-            endDate: checkOut,
-            source: 'booking',
-            bookingId: created.id,
-          },
-        });
-
-        await tx.bookingEvent.create({
-          data: {
-            bookingId: created.id,
-            fromStatus: 'draft',
-            toStatus: 'pending_payment',
-            metadata: { source: 'api' },
-          },
-        });
-
-        return created;
+      const booking = await createBookingWithAvailabilityBlock({
+        propertyId: data.property_id,
+        guestId,
+        checkIn,
+        checkOut,
+        guests: data.guests,
+        feesBreakdown: fees as object,
+        idempotencyKey: data.idempotency_key,
+        guestEmail,
+        guestName,
       });
 
       return reply.status(201).send({ booking, reused: false });
     } catch (err) {
-      if (err instanceof Error && err.message === 'DATES_NOT_AVAILABLE') {
-        return reply.status(409).send({ error: 'Dates are no longer available' });
+      if (isAvailabilityConflictError(err)) {
+        return reply.status(409).send(apiErrorBody(ApiErrorCode.DATES_NOT_AVAILABLE));
       }
+
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002' &&
+        Array.isArray(err.meta?.target) &&
+        err.meta.target.includes('idempotency_key')
+      ) {
+        const reused = await prisma.booking.findUnique({
+          where: { idempotencyKey: data.idempotency_key },
+        });
+        if (reused) {
+          return reply.status(200).send({ booking: reused, reused: true });
+        }
+      }
+
       throw err;
     }
   });
@@ -188,7 +173,7 @@ export async function bookingRoutes(app: FastifyInstance) {
     };
   });
 
-  app.get('/bookings/:id', async (request, reply) => {
+  app.get('/bookings/:id', { preHandler: authenticate }, async (request, reply) => {
     const { id } = request.params as { id: string };
 
     const booking = await prisma.booking.findUnique({
@@ -205,13 +190,22 @@ export async function bookingRoutes(app: FastifyInstance) {
       return reply.status(404).send({ error: 'Booking not found' });
     }
 
+    if (booking.guestId !== request.auth!.sub && request.auth!.role !== 'admin') {
+      return reply.status(403).send({ error: 'Not authorized' });
+    }
+
     return { booking };
   });
 
   app.post('/bookings/:id/cancel', { preHandler: authenticate }, async (request, reply) => {
     const { id } = request.params as { id: string };
 
-    const booking = await prisma.booking.findUnique({ where: { id } });
+    const booking = await prisma.booking.findUnique({
+      where: { id },
+      include: {
+        payments: { where: { status: 'succeeded' }, orderBy: { createdAt: 'desc' }, take: 1 },
+      },
+    });
     if (!booking) {
       return reply.status(404).send({ error: 'Booking not found' });
     }
@@ -220,10 +214,32 @@ export async function bookingRoutes(app: FastifyInstance) {
       return reply.status(403).send({ error: 'Not authorized' });
     }
 
+    if (booking.status === 'cancelled') {
+      return reply.status(400).send({ error: 'Booking is already cancelled' });
+    }
+
+    if (booking.status === 'checked_in' || booking.status === 'completed') {
+      return reply.status(400).send({ error: `Cannot cancel booking in status ${booking.status}` });
+    }
+
     try {
       assertTransition(booking.status, 'cancelled');
     } catch {
       return reply.status(400).send({ error: `Cannot cancel booking in status ${booking.status}` });
+    }
+
+    let refundInfo: Awaited<ReturnType<typeof calculateCancellationRefund>> | null = null;
+    let refundResult: Awaited<ReturnType<typeof issuePaymentRefund>> | null = null;
+
+    if (booking.status === 'confirmed') {
+      refundInfo = calculateCancellationRefund({
+        checkIn: booking.checkIn,
+        feesBreakdown: booking.feesBreakdown,
+      });
+
+      if (refundInfo.eligible && refundInfo.refund_amount > 0 && booking.payments[0]) {
+        refundResult = await issuePaymentRefund(booking.payments[0], refundInfo.refund_amount);
+      }
     }
 
     const updated = await prisma.$transaction(async (tx) => {
@@ -238,12 +254,26 @@ export async function bookingRoutes(app: FastifyInstance) {
           bookingId: id,
           fromStatus: booking.status,
           toStatus: 'cancelled',
+          metadata: {
+            refund: refundInfo,
+            refund_result: refundResult,
+          } as object,
         },
       });
 
       return b;
     });
 
-    return { booking: updated };
+    return {
+      booking: updated,
+      cancellation: {
+        policy: refundInfo?.policy ?? 'moderate',
+        refund_eligible: refundInfo?.eligible ?? false,
+        refund_amount: refundInfo?.refund_amount ?? 0,
+        refund_percent: refundInfo?.refund_percent ?? 0,
+        reason: refundInfo?.reason ?? 'Reserva pendiente de pago — sin cargo.',
+        refund_status: refundResult?.status ?? (booking.status === 'pending_payment' ? 'skipped' : 'not_applicable'),
+      },
+    };
   });
 }

@@ -1,7 +1,7 @@
 # Waná — Smart Checklist (estado de plataforma)
 
-**Última revisión:** post-deploy staging `http://164.92.241.30`  
-**Modo:** pre-live · pagos mock · sin keys Bold/Stripe/Alegra
+**Última revisión:** post-deploy `https://eleveri.app`  
+**Modo:** pre-live · pagos mock · dominio Eleveri activo
 
 Leyenda: ✅ listo · ⚠️ parcial · ❌ no funcional / legacy · 📋 pendiente
 
@@ -14,9 +14,10 @@ Leyenda: ✅ listo · ⚠️ parcial · ❌ no funcional / legacy · 📋 pendie
 | Droplet DigitalOcean | ✅ | `164.92.241.30` |
 | Docker stack (API+Web+DB+MinIO+Nginx) | ✅ | `docker-compose.staging.yml` |
 | Health `/health` + API | ✅ | DB connected |
-| HTTPS / dominio | ❌ | Solo HTTP; falta Cloudflare + `wana.co` |
-| Pagos live | ❌ | `PAYMENTS_MODE=mock` |
-| Alegra facturación | ❌ | Sin credenciales |
+| HTTPS / dominio | ✅ | `https://eleveri.app` (Cloudflare) |
+| Redirect www → apex | ✅ | nginx staging |
+| Pagos live Bold/Stripe | ❌ | `PAYMENTS_MODE=mock` (pendiente keys) |
+| Alegra facturación | ❌ | Sin credenciales live |
 | Backups automáticos | 📋 | Script `deploy/scripts/backup-db.sh` |
 
 ---
@@ -26,14 +27,16 @@ Leyenda: ✅ listo · ⚠️ parcial · ❌ no funcional / legacy · 📋 pendie
 | Pantalla / acción | Estado | Verificación |
 |-------------------|--------|--------------|
 | Home `/` | ✅ | Hero, destacados API |
-| Listado `/properties` | ✅ | Grid + cards |
+| Listado `/properties` | ✅ | Grid + filtros ciudad/huéspedes/fechas |
 | Detalle `/properties/[slug]` | ✅ | Galería + widget |
 | Cotizar fechas | ✅ | API `bookings/quote` |
 | Crear reserva | ✅ | Requiere login JWT |
 | Checkout | ✅ | Bold/Stripe/mock |
 | Success + confirmación | ✅ | Polling estado |
-| Login `/auth/login` | ✅ | JWT + cookie |
-| Register `/auth/register` | ✅ | guest/host |
+| Login `/auth/login` | ✅ | JWT + cookie + Turnstile |
+| Register `/auth/register` | ✅ | guest/host + `?redirect=` |
+| Sesión unificada cookie/localStorage | ✅ | `lib/auth-session.ts` |
+| Huésped en `/host` | ✅ | → `/become-host` |
 | Logout (Header) | ✅ | Limpia token |
 | Account `/account` | ✅ | Perfil básico |
 
@@ -155,7 +158,7 @@ Leyenda: ✅ listo · ⚠️ parcial · ❌ no funcional / legacy · 📋 pendie
 
 ### P2 — Diseño consistente
 9. Unificar páginas legacy (`rounded-[32px] bg-slate-50`) al design system Waná
-10. FAQ + legal con Header/Footer global
+10. ~~Eliminar Supabase legacy~~ ✅ (Jul 2026 — API Fastify + JWT únicamente)
 11. Favicon + OG images por propiedad en prod
 
 ### P3 — Go-live

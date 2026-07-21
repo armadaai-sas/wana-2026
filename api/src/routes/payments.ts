@@ -1,10 +1,16 @@
-import type { FastifyInstance, FastifyRequest } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
 import { createProviderIntent, resolveProvider } from '../lib/payments/router.js';
 import { confirmPaymentSuccess } from '../lib/payments/confirm-payment.js';
 import { syncBoldPayment } from '../lib/payments/bold-provider.js';
 import { syncStripePayment } from '../lib/payments/stripe-provider.js';
+import {
+  accessErrorReply,
+  getBookingForGuestOrAdmin,
+  getPaymentForGuestOrAdmin,
+} from '../lib/booking-access.js';
+import { authenticate } from '../plugins/auth.js';
 
 const intentSchema = z.object({
   booking_id: z.string().uuid(),
@@ -20,7 +26,7 @@ function getTotalFromFees(fees: unknown): number {
 }
 
 export async function paymentRoutes(app: FastifyInstance) {
-  app.post('/payments/intent', async (request, reply) => {
+  app.post('/payments/intent', { preHandler: authenticate }, async (request, reply) => {
     const body = intentSchema.safeParse(request.body);
     if (!body.success) {
       return reply.status(400).send({ error: 'Invalid body', details: body.error.flatten() });
@@ -28,11 +34,21 @@ export async function paymentRoutes(app: FastifyInstance) {
 
     const { booking_id, provider: requested, idempotency_key, return_url } = body.data;
 
+    const access = await getBookingForGuestOrAdmin(booking_id, request.auth!);
+    if ('error' in access) {
+      const err = accessErrorReply(access.error);
+      return reply.status(err.status).send(err.body);
+    }
+
     const existing = await prisma.payment.findUnique({
       where: { idempotencyKey: idempotency_key },
     });
 
     if (existing) {
+      if (existing.bookingId !== booking_id) {
+        return reply.status(409).send({ error: 'Idempotency key belongs to another booking' });
+      }
+
       if (existing.status === 'succeeded') {
         return reply.send({
           payment: existing,
@@ -67,6 +83,16 @@ export async function paymentRoutes(app: FastifyInstance) {
     if (booking.status !== 'pending_payment') {
       return reply.status(400).send({
         error: `Booking is not payable (status: ${booking.status})`,
+      });
+    }
+
+    const alreadyPaid = await prisma.payment.findFirst({
+      where: { bookingId: booking_id, status: 'succeeded' },
+    });
+    if (alreadyPaid) {
+      return reply.status(409).send({
+        error: 'Booking already paid',
+        payment_id: alreadyPaid.id,
       });
     }
 
@@ -143,8 +169,14 @@ export async function paymentRoutes(app: FastifyInstance) {
     }
   });
 
-  app.get('/payments/:id', async (request, reply) => {
+  app.get('/payments/:id', { preHandler: authenticate }, async (request, reply) => {
     const { id } = request.params as { id: string };
+    const access = await getPaymentForGuestOrAdmin(id, request.auth!);
+    if ('error' in access) {
+      const err = accessErrorReply(access.error);
+      return reply.status(err.status).send(err.body);
+    }
+
     const payment = await prisma.payment.findUnique({
       where: { id },
       include: {
@@ -156,15 +188,17 @@ export async function paymentRoutes(app: FastifyInstance) {
       },
     });
 
-    if (!payment) {
-      return reply.status(404).send({ error: 'Payment not found' });
-    }
-
     return { payment };
   });
 
-  app.get('/payments/by-booking/:bookingId', async (request, reply) => {
+  app.get('/payments/by-booking/:bookingId', { preHandler: authenticate }, async (request, reply) => {
     const { bookingId } = request.params as { bookingId: string };
+    const access = await getBookingForGuestOrAdmin(bookingId, request.auth!);
+    if ('error' in access) {
+      const err = accessErrorReply(access.error);
+      return reply.status(err.status).send(err.body);
+    }
+
     const payments = await prisma.payment.findMany({
       where: { bookingId },
       orderBy: { createdAt: 'desc' },
@@ -173,13 +207,16 @@ export async function paymentRoutes(app: FastifyInstance) {
     return { payments };
   });
 
-  app.post('/payments/:id/sync', async (request, reply) => {
+  app.post('/payments/:id/sync', { preHandler: authenticate }, async (request, reply) => {
     const { id } = request.params as { id: string };
 
-    const payment = await prisma.payment.findUnique({ where: { id } });
-    if (!payment) {
-      return reply.status(404).send({ error: 'Payment not found' });
+    const access = await getPaymentForGuestOrAdmin(id, request.auth!);
+    if ('error' in access) {
+      const err = accessErrorReply(access.error);
+      return reply.status(err.status).send(err.body);
     }
+
+    const payment = access.payment;
 
     if (payment.status === 'succeeded') {
       return { status: 'succeeded', booking_id: payment.bookingId };
@@ -200,23 +237,26 @@ export async function paymentRoutes(app: FastifyInstance) {
         externalId: sync.externalId ?? payment.externalId,
         raw: sync.raw,
       });
-      return { status: 'succeeded', booking_id: result.bookingId };
+      return {
+        status: 'succeeded',
+        booking_id: result.bookingId,
+        refund_required: result.refundRequired ?? false,
+      };
     }
 
     return { status: payment.status };
   });
 
-  /** Dev/mock: complete payment without provider */
-  app.post('/payments/:id/mock-complete', async (request, reply) => {
+  app.post('/payments/:id/mock-complete', { preHandler: authenticate }, async (request, reply) => {
     if (process.env.PAYMENTS_MODE !== 'mock' && process.env.NODE_ENV === 'production') {
       return reply.status(403).send({ error: 'Mock payments disabled' });
     }
 
     const { id } = request.params as { id: string };
-    const payment = await prisma.payment.findUnique({ where: { id } });
-
-    if (!payment) {
-      return reply.status(404).send({ error: 'Payment not found' });
+    const access = await getPaymentForGuestOrAdmin(id, request.auth!);
+    if ('error' in access) {
+      const err = accessErrorReply(access.error);
+      return reply.status(err.status).send(err.body);
     }
 
     const result = await confirmPaymentSuccess({
@@ -225,7 +265,11 @@ export async function paymentRoutes(app: FastifyInstance) {
       raw: { mock: true },
     });
 
-    return { status: 'succeeded', booking_id: result.bookingId };
+    return {
+      status: 'succeeded',
+      booking_id: result.bookingId,
+      refund_required: result.refundRequired ?? false,
+    };
   });
 }
 
@@ -253,10 +297,7 @@ export async function webhookRoutes(app: FastifyInstance) {
 
     const payment = await prisma.payment.findFirst({
       where: {
-        OR: [
-          { idempotencyKey: parsed.reference },
-          { externalId: parsed.paymentLink },
-        ],
+        OR: [{ idempotencyKey: parsed.reference }, { externalId: parsed.paymentLink }],
       },
     });
 

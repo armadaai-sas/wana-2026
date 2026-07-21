@@ -13,9 +13,21 @@ Referencia de qué servicio usa cada variable (sin valores secretos).
 
 ## Cloudflare Turnstile
 
-- **Site key** (pública): widget en el frontend.
-- **Secret key** (privada): validación en API al enviar formularios.
-- Dashboard: [Cloudflare → Turnstile](https://dash.cloudflare.com/)
+- **Site key** (pública): `NEXT_PUBLIC_TURNSTILE_SITE_KEY` — widget en login/registro.
+- **Secret key** (privada): `TURNSTILE_SECRET_KEY` — validación en API.
+- Dashboard: [Cloudflare → Turnstile](https://dash.cloudflare.com/?to=/:account/turnstile)
+
+**Hostnames obligatorios en el widget:**
+
+| Hostname |
+|----------|
+| `eleveri.app` |
+| `www.eleveri.app` |
+| `localhost` (desarrollo) |
+
+Tras crear keys nuevas, actualiza `.env.staging` y redeploy (`npm run go-live:remote`).
+
+Bypass temporal (solo debug): `TURNSTILE_DISABLED=1` y `NEXT_PUBLIC_TURNSTILE_DISABLED=1` en `.env.staging`.
 
 ## Resend
 
@@ -26,7 +38,8 @@ Referencia de qué servicio usa cada variable (sin valores secretos).
 
 - **Client ID** + **Client secret**: login con Google (Identity Services, credential JWT).
 - En Google Console → Credentials → OAuth client, autorizar **JavaScript origins**:
-  - `http://164.92.241.30` (staging)
+  - `https://eleveri.app`
+  - `https://www.eleveri.app`
   - `http://localhost:3000` (local)
 - No hace falta redirect URI para el flujo actual (One Tap / botón GIS).
 

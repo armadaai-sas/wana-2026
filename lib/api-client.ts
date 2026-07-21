@@ -1,10 +1,11 @@
+import { getToken } from './auth-session';
+import { humanizeApiError } from './api-errors';
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 
 function getAuthToken(): string | null {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('wana_token');
-  }
-  return null;
+  if (typeof window === 'undefined') return null;
+  return getToken();
 }
 
 export class ApiError extends Error {
@@ -34,7 +35,9 @@ async function request<T>(path: string, options?: RequestInit & { auth?: boolean
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    throw new ApiError(data.error ?? 'Request failed', res.status, data.details);
+    const raw = typeof data.error === 'string' ? data.error : 'Request failed';
+    const code = typeof data.code === 'string' ? data.code : undefined;
+    throw new ApiError(humanizeApiError(raw, code), res.status, data.details);
   }
 
   return data as T;
@@ -196,7 +199,7 @@ export const wanaApi = {
     }),
 
   adminPendingInvoices: () =>
-    request<{ data: unknown[] }>('/api/v1/admin/invoices/pending', { auth: true }),
+    request<{ data: AdminPendingInvoiceRow[] }>('/api/v1/admin/invoices/pending', { auth: true }),
 
   adminRetryInvoice: (id: string) =>
     request<{ success: boolean }>(`/api/v1/admin/invoices/${id}/retry`, {
@@ -204,10 +207,18 @@ export const wanaApi = {
       auth: true,
     }),
 
-  listProperties: (params?: { city?: string; guests?: number; limit?: number }) => {
+  listProperties: (params?: {
+    city?: string;
+    guests?: number;
+    check_in?: string;
+    check_out?: string;
+    limit?: number;
+  }) => {
     const q = new URLSearchParams();
     if (params?.city) q.set('city', params.city);
     if (params?.guests) q.set('guests', String(params.guests));
+    if (params?.check_in) q.set('check_in', params.check_in);
+    if (params?.check_out) q.set('check_out', params.check_out);
     if (params?.limit) q.set('limit', String(params.limit));
     const query = q.toString();
     return request<{ data: PropertyListItem[]; meta: { count: number } }>(
@@ -344,6 +355,22 @@ export interface AdminPendingMedia {
   property_title: string;
   property_slug: string;
   created_at: string;
+}
+
+export interface AdminPendingInvoiceRow {
+  id: string;
+  bookingId: string;
+  status: string;
+  guestEmail: string | null;
+  guestName: string | null;
+  alegraError: string | null;
+  alegraInvoiceId: string | null;
+  createdAt: string;
+  booking?: {
+    id: string;
+    status: string;
+    property?: { title: string };
+  };
 }
 
 export interface BookingDetail {

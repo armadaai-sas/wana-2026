@@ -7,16 +7,18 @@ const items = [
 
 export default function TrustStrip() {
   return (
-    <section className="border-y border-wana-border bg-wana-sand/35">
-      <div className="wana-container py-5">
-        <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-center sm:gap-x-12">
+    <section className="border-y border-wana-border/80 bg-wana-cream">
+      <div className="wana-container py-6 sm:py-8">
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
           {items.map((item) => (
-            <li key={item.label} className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-wana-charcoal">
+            <li
+              key={item.label}
+              className="rounded-2xl border border-wana-border/80 bg-white/80 px-3 py-4 text-center shadow-[0_2px_12px_rgba(0,0,0,0.04)] sm:px-4"
+            >
+              <p className="text-[11px] font-bold uppercase leading-snug tracking-[0.12em] text-wana-charcoal sm:text-xs sm:tracking-[0.15em]">
                 {item.label}
-              </span>
-              <span className="hidden text-wana-gold sm:inline" aria-hidden>·</span>
-              <span className="text-xs text-wana-muted">{item.detail}</span>
+              </p>
+              <p className="mt-1.5 text-xs leading-relaxed text-wana-muted">{item.detail}</p>
             </li>
           ))}
         </ul>

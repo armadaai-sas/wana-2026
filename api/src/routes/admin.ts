@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
 import { retryPendingInvoice } from '../lib/invoicing.js';
+import { syncAllEnabledCalendarFeeds } from '../lib/ical/sync-feed.js';
 import { authenticate, requireRoles } from '../plugins/auth.js';
 
 const statusSchema = z.object({
@@ -196,6 +197,46 @@ export async function adminRoutes(app: FastifyInstance) {
         return reply.status(422).send({ error: 'Invoice retry failed' });
       }
       return reply.send({ success: true });
+    },
+  );
+
+  app.get(
+    '/admin/calendar-sync',
+    { preHandler: [authenticate, requireRoles(['admin'])] },
+    async () => {
+      const feeds = await prisma.propertyCalendarFeed.findMany({
+        orderBy: [{ propertyId: 'asc' }, { channel: 'asc' }],
+        include: { property: { select: { slug: true, title: true } } },
+      });
+
+      return {
+        enabled: process.env.ICAL_SYNC_ENABLED === '1',
+        data: feeds.map((f) => ({
+          id: f.id,
+          property_slug: f.property.slug,
+          property_title: f.property.title,
+          channel: f.channel,
+          enabled: f.enabled,
+          last_synced_at: f.lastSyncedAt?.toISOString() ?? null,
+          last_error: f.lastError,
+          event_count_last_sync: f.eventCountLastSync,
+          skipped_last_sync: f.skippedLastSync,
+          import_url_configured: Boolean(f.importUrl),
+        })),
+      };
+    },
+  );
+
+  app.post(
+    '/admin/calendar-sync/run',
+    { preHandler: [authenticate, requireRoles(['admin'])] },
+    async (_request, reply) => {
+      if (process.env.ICAL_SYNC_ENABLED !== '1') {
+        return reply.status(503).send({ error: 'ICAL_SYNC_DISABLED' });
+      }
+
+      const results = await syncAllEnabledCalendarFeeds();
+      return { results };
     },
   );
 }

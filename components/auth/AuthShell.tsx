@@ -16,7 +16,7 @@ export const AUTH_BACKGROUND_IMAGE = '/properties/glamping-wana/01-cover.jpeg';
 export default function AuthShell({
   children,
   image = AUTH_BACKGROUND_IMAGE,
-  imageAlt = 'Glamping Waná — experiencia en naturaleza',
+  imageAlt = 'Eleveri — experiencia en naturaleza',
   topLink,
 }: AuthShellProps) {
   return (

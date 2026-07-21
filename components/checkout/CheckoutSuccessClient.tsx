@@ -21,6 +21,8 @@ export default function CheckoutSuccessClient({
 
   useEffect(() => {
     let cancelled = false;
+    let attempts = 0;
+    const maxAttempts = 20;
 
     async function sync() {
       try {
@@ -56,7 +58,14 @@ export default function CheckoutSuccessClient({
     }
 
     sync();
-    const interval = setInterval(sync, 3000);
+    const interval = setInterval(() => {
+      attempts += 1;
+      if (attempts >= maxAttempts) {
+        clearInterval(interval);
+        return;
+      }
+      sync();
+    }, 3000);
     return () => {
       cancelled = true;
       clearInterval(interval);
@@ -84,10 +93,17 @@ export default function CheckoutSuccessClient({
       <p className="mt-3 text-wana-muted">
         {status === 'confirmed'
           ? 'Te enviaremos los detalles a tu correo. ¡Nos vemos pronto!'
-          : 'Estamos confirmando tu pago. Esta página se actualizará automáticamente.'}
+          : status === 'loading'
+            ? 'Estamos confirmando tu pago. Esta página se actualizará automáticamente.'
+            : 'El pago sigue en proceso. Revisa tu correo o tu cuenta en unos minutos; si persiste, contáctanos.'}
       </p>
 
       <div className="mt-10 flex flex-col gap-3 text-sm">
+        {status === 'pending' && (
+          <Link href="/account" className="font-medium text-wana-forest hover:underline">
+            Ir a mi cuenta
+          </Link>
+        )}
         {propertySlug && (
           <Link href={`/properties/${propertySlug}`} className="font-medium text-wana-forest hover:underline">
             Volver a la propiedad

@@ -13,19 +13,23 @@ const STATUS_LABELS: Record<PropertyStatus, string> = {
 };
 
 export default function AdminPropertiesPanel() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<AdminPropertyRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user || user.role !== 'admin') return;
+    if (authLoading) return;
+    if (!user || user.role !== 'admin') {
+      setLoading(false);
+      return;
+    }
     wanaApi
       .adminProperties()
       .then((r) => setRows(r.data))
       .catch((e) => toast.error(e instanceof Error ? e.message : 'Error'))
       .finally(() => setLoading(false));
-  }, [user]);
+  }, [user, authLoading]);
 
   const updateStatus = async (id: string, status: PropertyStatus) => {
     setBusyId(id);
@@ -40,7 +44,11 @@ export default function AdminPropertiesPanel() {
     }
   };
 
-  if (loading) return <p className="text-wana-muted">Cargando propiedades…</p>;
+  if (authLoading || loading) return <p className="text-wana-muted">Cargando propiedades…</p>;
+
+  if (!user || user.role !== 'admin') {
+    return <p className="text-wana-muted">Acceso restringido a administradores.</p>;
+  }
 
   return (
     <div className="wana-card overflow-hidden">

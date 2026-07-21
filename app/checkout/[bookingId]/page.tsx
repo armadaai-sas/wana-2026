@@ -1,6 +1,7 @@
 import Header from '@/components/Header';
 import CheckoutClient from '@/components/checkout/CheckoutClient';
-import { wanaApi } from '@/lib/api-client';
+import { wanaApi, ApiError } from '@/lib/api-client';
+import { getServerBooking } from '@/lib/api-server';
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 
@@ -14,11 +15,14 @@ export default async function CheckoutPage({
   const { bookingId } = await params;
   const { property: propertySlug } = await searchParams;
 
-  let booking: Awaited<ReturnType<typeof wanaApi.getBooking>>['booking'];
+  let booking: Awaited<ReturnType<typeof getServerBooking>>['booking'];
   try {
-    const res = await wanaApi.getBooking(bookingId);
+    const res = await getServerBooking(bookingId);
     booking = res.booking;
-  } catch {
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 401) {
+      redirect(`/auth/login?redirect=${encodeURIComponent(`/checkout/${bookingId}`)}`);
+    }
     notFound();
   }
 

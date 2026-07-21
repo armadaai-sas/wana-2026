@@ -13,6 +13,11 @@ import { publicSiteUrl, sendEmail } from '../lib/email.js';
 import { authenticate } from '../plugins/auth.js';
 import { requireTurnstile } from '../lib/auth-guards.js';
 import { verifyGoogleIdToken } from '../lib/google-auth.js';
+import { sendWelcomeEmail } from '../lib/marketing.js';
+import {
+  DEMO_ACCOUNT_BLOCKED_MESSAGE,
+  isDemoAccountLoginBlocked,
+} from '../lib/demo-accounts.js';
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -48,7 +53,9 @@ const resetPasswordSchema = z.object({
 });
 
 export async function authRoutes(app: FastifyInstance) {
-  app.post('/auth/register', async (request, reply) => {
+  app.post('/auth/register', {
+    config: { rateLimit: { max: 10, timeWindow: '1 minute' } },
+  }, async (request, reply) => {
     const body = registerSchema.safeParse(request.body);
     if (!body.success) {
       return reply.status(400).send({ error: 'Invalid body', details: body.error.flatten() });
@@ -56,12 +63,16 @@ export async function authRoutes(app: FastifyInstance) {
 
     const { email, password, name, role, turnstile_token } = body.data;
 
-    if (!(await requireTurnstile(request, reply, turnstile_token))) return;
+    if (isDemoAccountLoginBlocked(email)) {
+      return reply.status(403).send({ error: DEMO_ACCOUNT_BLOCKED_MESSAGE });
+    }
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       return reply.status(409).send({ error: 'Email already registered' });
     }
+
+    if (!(await requireTurnstile(request, reply, turnstile_token))) return;
 
     const passwordHash = await hashPassword(password);
     const user = await prisma.user.create({
@@ -70,13 +81,21 @@ export async function authRoutes(app: FastifyInstance) {
 
     const token = await signToken({ id: user.id, email: user.email, role: user.role });
 
+    sendWelcomeEmail({ email: user.email, name: user.name, role: user.role }).then((result) => {
+      if (!result.sent) {
+        request.log.warn({ reason: result.reason, email: user.email }, 'Welcome email not sent');
+      }
+    });
+
     return reply.status(201).send({
       token,
       user: serializeUser(user),
     });
   });
 
-  app.post('/auth/login', async (request, reply) => {
+  app.post('/auth/login', {
+    config: { rateLimit: { max: 15, timeWindow: '1 minute' } },
+  }, async (request, reply) => {
     const body = loginSchema.safeParse(request.body);
     if (!body.success) {
       return reply.status(400).send({ error: 'Invalid body', details: body.error.flatten() });
@@ -84,7 +103,10 @@ export async function authRoutes(app: FastifyInstance) {
 
     const { email, password, turnstile_token } = body.data;
 
-    if (!(await requireTurnstile(request, reply, turnstile_token))) return;
+    if (isDemoAccountLoginBlocked(email)) {
+      return reply.status(403).send({ error: DEMO_ACCOUNT_BLOCKED_MESSAGE });
+    }
+
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user?.passwordHash) {
@@ -96,6 +118,8 @@ export async function authRoutes(app: FastifyInstance) {
       return reply.status(401).send({ error: 'Invalid email or password' });
     }
 
+    if (!(await requireTurnstile(request, reply, turnstile_token))) return;
+
     const token = await signToken({ id: user.id, email: user.email, role: user.role });
 
     return {
@@ -104,17 +128,23 @@ export async function authRoutes(app: FastifyInstance) {
     };
   });
 
-  app.post('/auth/google', async (request, reply) => {
+  app.post('/auth/google', {
+    config: { rateLimit: { max: 15, timeWindow: '1 minute' } },
+  }, async (request, reply) => {
     const body = googleAuthSchema.safeParse(request.body);
     if (!body.success) {
       return reply.status(400).send({ error: 'Invalid body', details: body.error.flatten() });
     }
 
-    if (!(await requireTurnstile(request, reply, body.data.turnstile_token))) return;
-
     const profile = await verifyGoogleIdToken(body.data.credential);
     if (!profile) {
       return reply.status(401).send({ error: 'Google sign-in failed' });
+    }
+
+    if (!(await requireTurnstile(request, reply, body.data.turnstile_token))) return;
+
+    if (isDemoAccountLoginBlocked(profile.email)) {
+      return reply.status(403).send({ error: DEMO_ACCOUNT_BLOCKED_MESSAGE });
     }
 
     let user = await prisma.user.findUnique({ where: { email: profile.email } });
@@ -133,6 +163,14 @@ export async function authRoutes(app: FastifyInstance) {
     }
 
     const token = await signToken({ id: user.id, email: user.email, role: user.role });
+
+    if (isNewUser) {
+      sendWelcomeEmail({ email: user.email, name: user.name, role: user.role }).then((result) => {
+        if (!result.sent) {
+          request.log.warn({ reason: result.reason, email: user.email }, 'Welcome email not sent');
+        }
+      });
+    }
 
     return {
       token,
@@ -168,7 +206,9 @@ export async function authRoutes(app: FastifyInstance) {
     return { success: true };
   });
 
-  app.post('/auth/forgot-password', async (request, reply) => {
+  app.post('/auth/forgot-password', {
+    config: { rateLimit: { max: 5, timeWindow: '1 minute' } },
+  }, async (request, reply) => {
     const body = forgotPasswordSchema.safeParse(request.body);
     if (!body.success) {
       return reply.status(400).send({ error: 'Invalid body' });
@@ -188,18 +228,18 @@ export async function authRoutes(app: FastifyInstance) {
 
     const token = await signResetToken(user.id, user.email);
     const resetUrl = `${publicSiteUrl()}/auth/reset-password?token=${encodeURIComponent(token)}`;
-    const subject = 'Restablece tu contraseña — Waná';
+    const subject = 'Restablece tu contraseña — Eleveri';
     const text = `
 Hola${user.name ? ` ${user.name}` : ''},
 
-Recibimos una solicitud para restablecer tu contraseña en Waná.
+Recibimos una solicitud para restablecer tu contraseña en Eleveri.
 
 Abre este enlace (válido 1 hora):
 ${resetUrl}
 
 Si no solicitaste esto, ignora este correo.
 
-— Waná Glamping
+— Eleveri
 `.trim();
 
     const result = await sendEmail({ to: user.email, subject, text });
@@ -231,5 +271,37 @@ Si no solicitaste esto, ignora este correo.
     });
 
     return { success: true };
+  });
+
+  /** Automated smoke tests only — mock mode + shared secret (no Turnstile). */
+  app.post('/auth/smoke-login', async (request, reply) => {
+    if (process.env.PAYMENTS_MODE !== 'mock') {
+      return reply.status(404).send({ error: 'Not found' });
+    }
+
+    const expected = process.env.SMOKE_AUTH_SECRET;
+    const provided = request.headers['x-smoke-secret'];
+    if (!expected || provided !== expected) {
+      return reply.status(403).send({ error: 'Forbidden' });
+    }
+
+    const body = loginSchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send({ error: 'Invalid body', details: body.error.flatten() });
+    }
+
+    const { email, password } = body.data;
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user?.passwordHash) {
+      return reply.status(401).send({ error: 'Invalid email or password' });
+    }
+
+    const valid = await verifyPassword(password, user.passwordHash);
+    if (!valid) {
+      return reply.status(401).send({ error: 'Invalid email or password' });
+    }
+
+    const token = await signToken({ id: user.id, email: user.email, role: user.role });
+    return { token, user: serializeUser(user) };
   });
 }

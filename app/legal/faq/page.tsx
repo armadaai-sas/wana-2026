@@ -14,12 +14,12 @@ const faqItems = [
   {
     title: '¿Cómo cancelo una reserva?',
     content:
-      'En Mi cuenta puedes cancelar reservas pendientes de pago. Para reservas confirmadas, contáctanos en hola@glampingwana.com.',
+      'En Mi cuenta puedes cancelar reservas pendientes de pago sin cargo. Para reservas confirmadas aplicamos política moderada: reembolso completo si cancelas con 5 o más días de antelación; 50% entre 2 y 4 días; sin reembolso con menos de 48 h antes del check-in. Los reembolsos se procesan al mismo método de pago (Bold o Stripe).',
   },
   {
     title: '¿Qué métodos de pago aceptan?',
     content:
-      'Bold y Stripe en producción. En staging usamos pagos simulados (mock) para probar el flujo completo sin cobro real.',
+      'En Colombia pagas en pesos (COP) con Bold. Para pagos internacionales usamos Stripe en dólares (USD). Tras confirmar el pago recibirás un correo de confirmación.',
   },
   {
     title: '¿Cómo cambio mi contraseña?',
@@ -33,7 +33,7 @@ export default function FAQPage() {
         <p className="wana-eyebrow">Ayuda</p>
         <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Preguntas frecuentes</h1>
         <p className="mt-2 text-wana-muted">
-          Respuestas sobre reservas, anfitriones y tu cuenta en Waná.
+          Respuestas sobre reservas, anfitriones y tu cuenta en Eleveri.
         </p>
         <div className="mt-8 space-y-3">
           {faqItems.map((item) => (

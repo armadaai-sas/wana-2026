@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { wanaApi, type AdminPendingMedia } from '@/lib/api-client';
 
 export default function AdminModerationPanel() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [items, setItems] = useState<AdminPendingMedia[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -20,9 +20,13 @@ export default function AdminModerationPanel() {
   };
 
   useEffect(() => {
-    if (!user || user.role !== 'admin') return;
+    if (authLoading) return;
+    if (!user || user.role !== 'admin') {
+      setLoading(false);
+      return;
+    }
     load();
-  }, [user]);
+  }, [user, authLoading]);
 
   const approve = async (id: string) => {
     setBusyId(id);
@@ -50,7 +54,11 @@ export default function AdminModerationPanel() {
     }
   };
 
-  if (loading) return <p className="text-wana-muted">Cargando media pendiente…</p>;
+  if (authLoading || loading) return <p className="text-wana-muted">Cargando media pendiente…</p>;
+
+  if (!user || user.role !== 'admin') {
+    return <p className="text-wana-muted">Acceso restringido a administradores.</p>;
+  }
 
   if (items.length === 0) {
     return (

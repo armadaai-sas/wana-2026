@@ -1,13 +1,20 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
+import { apiErrorBody, ApiErrorCode } from '../lib/api-errors.js';
 
 const listQuerySchema = z.object({
   city: z.string().optional(),
   guests: z.coerce.number().int().positive().optional(),
+  check_in: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  check_out: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   limit: z.coerce.number().int().min(1).max(50).default(24),
   offset: z.coerce.number().int().min(0).default(0),
 });
+
+function parseDateUTC(dateStr: string): Date {
+  return new Date(`${dateStr}T00:00:00.000Z`);
+}
 
 function serializeProperty(property: {
   id: string;
@@ -72,13 +79,33 @@ export async function propertyRoutes(app: FastifyInstance) {
       return reply.status(400).send({ error: 'Invalid query', details: query.error.flatten() });
     }
 
-    const { city, guests, limit, offset } = query.data;
+    const { city, guests, check_in, check_out, limit, offset } = query.data;
+
+    let dateFilter: Record<string, unknown> = {};
+    if (check_in && check_out) {
+      const checkIn = parseDateUTC(check_in);
+      const checkOut = parseDateUTC(check_out);
+      if (checkOut <= checkIn) {
+        return reply.status(400).send(apiErrorBody(ApiErrorCode.INVALID_DATE_RANGE));
+      }
+      dateFilter = {
+        NOT: {
+          availabilityBlocks: {
+            some: {
+              startDate: { lt: checkOut },
+              endDate: { gt: checkIn },
+            },
+          },
+        },
+      };
+    }
 
     const properties = await prisma.property.findMany({
       where: {
         status: 'published',
         ...(city ? { city: { contains: city, mode: 'insensitive' } } : {}),
         ...(guests ? { maxGuests: { gte: guests } } : {}),
+        ...dateFilter,
       },
       include: {
         media: {

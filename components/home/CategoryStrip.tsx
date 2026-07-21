@@ -2,55 +2,75 @@
 
 import { useRouter } from 'next/navigation';
 
-const CATEGORIES = [
-  { label: 'Colección', city: '', icon: '✦' },
-  { label: 'Domos', city: 'Sutatausa', icon: '◉' },
-  { label: 'Sutatausa', city: 'Sutatausa', icon: '◎' },
-  { label: 'Cucunubá', city: 'Cucunubá', icon: '◇' },
-  { label: 'Sabana', city: 'Sabana', icon: '△' },
-  { label: 'Glamping Waná', slug: 'glamping-wana', icon: '♥' },
+/** Ubicaciones + destacado — sin duplicados confusos */
+const REGIONS = [
+  { label: 'Toda la colección', city: '', detail: 'Colombia' },
+  { label: 'Sutatausa', city: 'Sutatausa', detail: 'Montañas y domos' },
+  { label: 'Cucunubá', city: 'Cucunubá', detail: 'Sabana rural' },
+  { label: 'Sabana de Bogotá', city: 'Sabana', detail: 'Cerca de la capital' },
 ] as const;
+
+const HIGHLIGHT = { label: 'Destacado', slug: 'glamping-wana', detail: 'Mejor valorado' } as const;
 
 export default function CategoryStrip({ activeCity }: { activeCity?: string }) {
   const router = useRouter();
 
-  const navigate = (item: typeof CATEGORIES[number]) => {
-    if ('slug' in item && item.slug) {
-      router.push(`/properties/${item.slug}`);
-      return;
-    }
+  const goCity = (city: string) => {
     const params = new URLSearchParams();
-    const city = 'city' in item ? item.city : '';
     if (city) params.set('city', city);
     router.push(`/properties${params.toString() ? `?${params}` : ''}`);
   };
 
   return (
-    <section className="border-b border-wana-border/60 bg-wana-cream/80 backdrop-blur-sm">
-      <div className="wana-container py-4">
-        <div className="flex items-center gap-3">
-          <span className="hidden shrink-0 text-[10px] font-bold uppercase tracking-[0.2em] text-wana-muted sm:inline">
+    <section className="relative z-10 border-b border-wana-border/70 bg-white/95 shadow-[0_4px_24px_rgba(0,0,0,0.04)] backdrop-blur-md">
+      <div className="wana-container py-3 sm:py-4">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4">
+          <p className="shrink-0 text-[11px] font-bold uppercase tracking-[0.2em] text-wana-muted">
             Explorar
-          </span>
-          <div className="flex flex-1 gap-2 overflow-x-auto pb-1 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {CATEGORIES.map((item) => {
-              const isActive =
-                'slug' in item
-                  ? false
-                  : ('city' in item && activeCity === item.city) || (!activeCity && 'city' in item && !item.city);
-              return (
-                <button
-                  key={item.label}
-                  type="button"
-                  onClick={() => navigate(item)}
-                  className={`wana-category-chip shrink-0 ${isActive ? 'wana-category-chip-active' : ''}`}
-                >
-                  <span className="text-wana-gold" aria-hidden>{item.icon}</span>
-                  {item.label}
-                </button>
-              );
-            })}
+          </p>
+
+          <div className="min-w-0 flex-1">
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-wana-muted/80 lg:sr-only">
+              Por región
+            </p>
+            <div className="flex gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {REGIONS.map((item) => {
+                const active =
+                  activeCity === item.city || (!activeCity && !item.city);
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => goCity(item.city)}
+                    className={`wana-category-chip shrink-0 ${active ? 'wana-category-chip-active' : ''}`}
+                  >
+                    <span className="text-left">
+                      <span className="block leading-tight">{item.label}</span>
+                      <span className="mt-0.5 block text-[10px] font-normal text-wana-muted sm:hidden">
+                        {item.detail}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
+          <div className="hidden h-8 w-px shrink-0 bg-wana-border lg:block" aria-hidden />
+
+          <button
+            type="button"
+            onClick={() => router.push(`/properties/${HIGHLIGHT.slug}`)}
+            className="wana-category-chip w-full shrink-0 justify-center border-wana-gold/40 bg-wana-gold/10 lg:w-auto"
+          >
+            <span aria-hidden className="text-wana-gold">
+              ★
+            </span>
+            <span>
+              {HIGHLIGHT.label}
+              <span className="hidden text-wana-muted lg:inline"> · {HIGHLIGHT.detail}</span>
+            </span>
+          </button>
         </div>
       </div>
     </section>

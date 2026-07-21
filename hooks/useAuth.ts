@@ -4,6 +4,17 @@ import { useCallback, useEffect, useState } from 'react';
 import { wanaApi, type AuthUser } from '@/lib/api-client';
 import { clearSession, getToken, setSession } from '@/lib/auth-session';
 
+const ME_TIMEOUT_MS = 12_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error('AUTH_TIMEOUT')), ms);
+    }),
+  ]);
+}
+
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +27,7 @@ export function useAuth() {
       return;
     }
     try {
-      const { user: me } = await wanaApi.me();
+      const { user: me } = await withTimeout(wanaApi.me(), ME_TIMEOUT_MS);
       setUser(me);
     } catch {
       clearSession();

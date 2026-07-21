@@ -1,11 +1,11 @@
-import { Suspense } from 'react';
-import AuthPageFallback from '@/components/auth/AuthPageFallback';
-import LoginPage from './LoginClient';
+import { safeAuthRedirect } from '@/lib/auth-session';
+import LoginClient from './LoginClient';
 
-export default function Page() {
-  return (
-    <Suspense fallback={<AuthPageFallback />}>
-      <LoginPage />
-    </Suspense>
-  );
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ redirect?: string }>;
+}) {
+  const sp = await searchParams;
+  return <LoginClient redirectTo={safeAuthRedirect(sp.redirect)} />;
 }

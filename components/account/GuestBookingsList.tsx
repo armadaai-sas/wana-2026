@@ -5,6 +5,7 @@ import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { wanaApi, type GuestBookingRow } from '@/lib/api-client';
 import { formatCop } from '@/lib/format';
+import EmptyState from '@/components/ui/EmptyState';
 
 const STATUS_LABELS: Record<string, string> = {
   pending_payment: 'Pendiente de pago',
@@ -28,11 +29,18 @@ export default function GuestBookingsList() {
   }, []);
 
   const cancel = async (id: string) => {
+    if (!window.confirm('¿Seguro que deseas cancelar esta reserva?')) return;
     setBusyId(id);
     try {
-      await wanaApi.cancelBooking(id);
+      const res = await wanaApi.cancelBooking(id);
       setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status: 'cancelled' } : r)));
-      toast.success('Reserva cancelada');
+      const refund = (res as { cancellation?: { refund_amount?: number; reason?: string } })
+        .cancellation;
+      if (refund?.refund_amount && refund.refund_amount > 0) {
+        toast.success(`Reserva cancelada. Reembolso estimado: ${formatCop(refund.refund_amount)}`);
+      } else {
+        toast.success(refund?.reason ?? 'Reserva cancelada');
+      }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'No se pudo cancelar');
     } finally {
@@ -40,16 +48,32 @@ export default function GuestBookingsList() {
     }
   };
 
-  if (loading) return <p className="mt-6 text-wana-muted">Cargando reservas…</p>;
+  if (loading) {
+    return (
+      <div className="mt-8 border-t border-wana-border pt-8">
+        <h2 className="font-display text-lg text-wana-charcoal">Mis reservas</h2>
+        <div className="mt-4 space-y-4 animate-pulse">
+          {[1, 2].map((i) => (
+            <div key={i} className="h-28 rounded-2xl bg-wana-sand" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (rows.length === 0) {
     return (
       <div className="mt-8 border-t border-wana-border pt-8">
         <h2 className="font-display text-lg text-wana-charcoal">Mis reservas</h2>
-        <p className="mt-2 text-wana-muted">Aún no tienes reservas.</p>
-        <Link href="/properties" className="mt-4 inline-flex text-sm font-semibold text-wana-forest hover:text-wana-gold">
-          Explorar espacios →
-        </Link>
+        <div className="mt-4">
+          <EmptyState
+            emoji="🌄"
+            title="Aún no tienes reservas"
+            description="Explora glampings únicos en Colombia y reserva tu próxima escapada en minutos."
+            actionLabel="Explorar espacios"
+            actionHref="/properties"
+          />
+        </div>
       </div>
     );
   }
@@ -99,12 +123,22 @@ export default function GuestBookingsList() {
                   </>
                 )}
                 {row.status === 'confirmed' && (
-                  <Link
-                    href={`/checkout/${row.id}/success?property=${row.property_slug}`}
-                    className="wana-btn-ghost !px-4 !py-2 text-sm min-h-[44px]"
-                  >
-                    Ver confirmación
-                  </Link>
+                  <>
+                    <Link
+                      href={`/checkout/${row.id}/success?property=${row.property_slug}`}
+                      className="wana-btn-ghost !px-4 !py-2 text-sm min-h-[44px]"
+                    >
+                      Ver confirmación
+                    </Link>
+                    <button
+                      type="button"
+                      disabled={busyId === row.id}
+                      onClick={() => cancel(row.id)}
+                      className="wana-btn-ghost !px-4 !py-2 text-sm min-h-[44px]"
+                    >
+                      Cancelar
+                    </button>
+                  </>
                 )}
               </div>
             </div>

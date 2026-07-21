@@ -99,8 +99,13 @@ fi
 
 echo ""
 echo "--- Alegra ---"
-check_optional ALEGRA_EMAIL "$ALEGRA_EMAIL"
-check_optional ALEGRA_API_TOKEN "$ALEGRA_API_TOKEN"
+if [[ "${PAYMENTS_MODE:-}" == "live" ]]; then
+  check_required ALEGRA_EMAIL "$ALEGRA_EMAIL"
+  check_required ALEGRA_API_TOKEN "$ALEGRA_API_TOKEN"
+else
+  check_optional ALEGRA_EMAIL "$ALEGRA_EMAIL"
+  check_optional ALEGRA_API_TOKEN "$ALEGRA_API_TOKEN"
+fi
 
 echo ""
 echo "--- Marketing ---"

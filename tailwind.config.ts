@@ -33,7 +33,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-dm-serif)', 'Georgia', 'serif'],
+        display: ['var(--font-display)', 'Cormorant Garamond', 'Georgia', 'serif'],
       },
       boxShadow: {
         wana: '0 6px 20px rgba(0, 0, 0, 0.08)',

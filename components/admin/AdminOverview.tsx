@@ -37,7 +37,7 @@ export default function AdminOverview() {
         { label: 'Propiedades', value: stats.properties_total, href: '/admin/properties' },
         { label: 'Reservas confirmadas', value: stats.bookings_confirmed, href: '/admin/bookings' },
         { label: 'Media pendiente', value: stats.media_pending, href: '/admin/moderation' },
-        { label: 'Facturas pendientes', value: stats.invoices_pending, href: '/admin/bookings' },
+        { label: 'Facturas pendientes', value: stats.invoices_pending, href: '/admin/invoices' },
       ]
     : [];
 

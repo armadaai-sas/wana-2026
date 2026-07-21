@@ -9,6 +9,7 @@ import { formatCop, formatDateRange } from '@/lib/format';
 import { formatPropertyLocation } from '@/lib/property-location';
 import PropertyThumb from '@/components/ui/PropertyThumb';
 import StripePaymentForm from './StripePaymentForm';
+import CheckoutStepper from './CheckoutStepper';
 
 interface CheckoutClientProps {
   booking: BookingDetail;
@@ -119,8 +120,12 @@ export default function CheckoutClient({ booking, propertySlug, coverImage }: Ch
     }
   };
 
+  const checkoutStep = stripeSession ? 'payment' : 'review';
+
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
+    <>
+      <CheckoutStepper current={checkoutStep} />
+      <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
       <div className="space-y-6">
         <section className="wana-card p-6">
           <h2 className="wana-section-title">Tu viaje</h2>
@@ -230,5 +235,6 @@ export default function CheckoutClient({ booking, propertySlug, coverImage }: Ch
         </div>
       </aside>
     </div>
+    </>
   );
 }

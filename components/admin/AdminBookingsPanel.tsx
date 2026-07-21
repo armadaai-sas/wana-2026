@@ -6,20 +6,28 @@ import { useAuth } from '@/hooks/useAuth';
 import { wanaApi, type AdminBookingRow } from '@/lib/api-client';
 
 export default function AdminBookingsPanel() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<AdminBookingRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || user.role !== 'admin') return;
+    if (authLoading) return;
+    if (!user || user.role !== 'admin') {
+      setLoading(false);
+      return;
+    }
     wanaApi
       .adminBookings()
       .then((r) => setRows(r.data))
       .catch((e) => toast.error(e instanceof Error ? e.message : 'Error'))
       .finally(() => setLoading(false));
-  }, [user]);
+  }, [user, authLoading]);
 
-  if (loading) return <p className="text-wana-muted">Cargando reservas…</p>;
+  if (authLoading || loading) return <p className="text-wana-muted">Cargando reservas…</p>;
+
+  if (!user || user.role !== 'admin') {
+    return <p className="text-wana-muted">Acceso restringido a administradores.</p>;
+  }
 
   return (
     <div className="wana-card overflow-hidden">

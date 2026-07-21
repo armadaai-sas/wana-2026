@@ -8,6 +8,7 @@ const adminLinks = [
   { href: '/admin/properties', label: 'Propiedades' },
   { href: '/admin/moderation', label: 'Media' },
   { href: '/admin/bookings', label: 'Reservas' },
+  { href: '/admin/invoices', label: 'Facturas' },
 ];
 
 export default function AdminNav() {

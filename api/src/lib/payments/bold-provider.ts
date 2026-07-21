@@ -93,7 +93,9 @@ export async function syncBoldPayment(externalId: string): Promise<ProviderSyncR
 
 export function verifyBoldWebhook(payload: unknown, signature: string | undefined): boolean {
   const secret = process.env.BOLD_WEBHOOK_SECRET;
-  if (!secret) return process.env.NODE_ENV === 'development';
+  if (!secret) {
+    return process.env.NODE_ENV !== 'production' && process.env.PAYMENTS_MODE === 'mock';
+  }
   if (!signature) return false;
   return signature === secret || signature === `Bearer ${secret}`;
 }

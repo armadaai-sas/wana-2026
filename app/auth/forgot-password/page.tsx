@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
       <p className="wana-eyebrow">Cuenta</p>
       <h1 className="mt-2 font-display text-2xl text-wana-charcoal sm:text-3xl">Recuperar contraseña</h1>
       <p className="mt-3 text-sm text-wana-muted">
-        Te enviaremos un enlace si el correo está registrado en Waná.
+        Te enviaremos un enlace si el correo está registrado en Eleveri.
       </p>
 
       {sent ? (

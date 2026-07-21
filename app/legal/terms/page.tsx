@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Términos y condiciones | Waná',
+  title: 'Términos y condiciones | Eleveri',
 };
 
 export default function TermsPage() {
@@ -13,14 +13,14 @@ export default function TermsPage() {
         <section>
           <h2 className="font-semibold text-wana-charcoal">1. Aceptación</h2>
           <p className="mt-2">
-            Al usar Waná aceptas estos términos. Si no estás de acuerdo, no utilices la plataforma.
+            Al usar Eleveri aceptas estos términos. Si no estás de acuerdo, no utilices la plataforma.
           </p>
         </section>
 
         <section>
           <h2 className="font-semibold text-wana-charcoal">2. Servicio</h2>
           <p className="mt-2">
-            Waná conecta huéspedes con anfitriones de espacios de glamping y refugios. Waná no es
+            Eleveri conecta huéspedes con anfitriones de espacios de glamping y refugios. Eleveri no es
             propietario de los alojamientos salvo que se indique expresamente.
           </p>
         </section>
@@ -38,7 +38,7 @@ export default function TermsPage() {
           <h2 className="font-semibold text-wana-charcoal">4. Anfitriones</h2>
           <p className="mt-2">
             Los anfitriones deben proporcionar información veraz, mantener calendarios actualizados y
-            cumplir normas locales de turismo y seguridad. Waná puede suspender listados que incumplan
+            cumplir normas locales de turismo y seguridad. Eleveri puede suspender listados que incumplan
             estándares de calidad o legalidad.
           </p>
         </section>
@@ -54,8 +54,8 @@ export default function TermsPage() {
         <section>
           <h2 className="font-semibold text-wana-charcoal">6. Limitación de responsabilidad</h2>
           <p className="mt-2">
-            Waná facilita la conexión entre partes. No garantizamos disponibilidad continua del
-            servicio ni ausencia de errores. La responsabilidad directa de Waná se limita al valor
+            Eleveri facilita la conexión entre partes. No garantizamos disponibilidad continua del
+            servicio ni ausencia de errores. La responsabilidad directa de Eleveri se limita al valor
             de la reserva correspondiente cuando la ley lo permita.
           </p>
         </section>

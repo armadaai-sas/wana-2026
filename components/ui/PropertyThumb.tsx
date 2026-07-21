@@ -36,7 +36,7 @@ export default function PropertyThumb({ src, alt, size = 'md', className = '' }:
       aria-hidden
     >
       <span className="text-lg text-wana-gold">✦</span>
-      <span>Waná</span>
+      <span>Eleveri</span>
     </div>
   );
 }

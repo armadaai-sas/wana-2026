@@ -1,32 +1,36 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import TurnstileWidget from '@/components/auth/TurnstileWidget';
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
 import AuthDivider from '@/components/auth/AuthDivider';
 import AuthShell from '@/components/auth/AuthShell';
+import { navigateAfterAuth, resolvePostAuthPath } from '@/lib/auth-redirect';
+import { isTurnstileEnabledClient } from '@/lib/turnstile-config';
 
-const TURNSTILE_ENABLED = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+const TURNSTILE_ENABLED = isTurnstileEnabledClient();
 const GOOGLE_ENABLED = Boolean(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
 
-export default function LoginPage() {
+export default function LoginPage({ redirectTo = '/' }: { redirectTo?: string }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { login, loginWithGoogle } = useAuth();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') ?? '/';
 
-  const afterAuth = (user: { role: string }) => {
-    if (user.role === 'host') router.push('/host');
-    else if (user.role === 'admin') router.push('/admin');
-    else router.push(redirect);
+  const needsTurnstile = TURNSTILE_ENABLED && !turnstileToken;
+
+  const refreshTurnstile = () => {
+    setTurnstileToken('');
+    setTurnstileResetKey((k) => k + 1);
+  };
+
+  const afterAuth = (user: { role: 'guest' | 'host' | 'admin' }) => {
+    navigateAfterAuth(resolvePostAuthPath(user.role, redirectTo));
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -41,6 +45,7 @@ export default function LoginPage() {
       const user = await login(email, password, turnstileToken || undefined);
       afterAuth(user);
     } catch (err) {
+      if (TURNSTILE_ENABLED) refreshTurnstile();
       setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
     } finally {
       setLoading(false);
@@ -58,6 +63,7 @@ export default function LoginPage() {
       const user = await loginWithGoogle(credential, { turnstile_token: turnstileToken || undefined });
       afterAuth(user);
     } catch (err) {
+      if (TURNSTILE_ENABLED) refreshTurnstile();
       setError(err instanceof Error ? err.message : 'Error con Google');
     } finally {
       setLoading(false);
@@ -70,14 +76,12 @@ export default function LoginPage() {
       <h1 className="mt-2 font-display text-3xl text-wana-charcoal">Iniciar sesión</h1>
       <p className="mt-2 text-sm text-wana-muted">Reserva con la confianza de una plataforma internacional.</p>
 
-      {(GOOGLE_ENABLED || TURNSTILE_ENABLED) && (
-        <div className="mt-6 space-y-4">
-          <TurnstileWidget onToken={setTurnstileToken} onExpire={() => setTurnstileToken('')} />
-          {GOOGLE_ENABLED && <GoogleSignInButton onCredential={handleGoogle} text="signin_with" />}
+      {(GOOGLE_ENABLED || TURNSTILE_ENABLED) && GOOGLE_ENABLED && (
+        <div className="mt-6">
+          <GoogleSignInButton onCredential={handleGoogle} text="signin_with" />
+          <AuthDivider label="o con email" />
         </div>
       )}
-
-      {GOOGLE_ENABLED && <AuthDivider label="o con email" />}
 
       <form onSubmit={handleLogin} className="space-y-4">
         <label className="block space-y-1.5">
@@ -103,12 +107,27 @@ export default function LoginPage() {
           />
         </label>
 
+        {TURNSTILE_ENABLED && (
+          <TurnstileWidget
+            resetKey={turnstileResetKey}
+            onToken={setTurnstileToken}
+            onExpire={() => {
+              setTurnstileToken('');
+              setTurnstileResetKey((k) => k + 1);
+            }}
+          />
+        )}
+
         {error && (
           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
         )}
 
-        <button type="submit" disabled={loading} className="wana-btn-primary w-full min-h-[48px]">
-          {loading ? 'Entrando…' : 'Entrar'}
+        <button
+          type="submit"
+          disabled={loading || needsTurnstile}
+          className="wana-btn-primary w-full min-h-[48px] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? 'Entrando…' : needsTurnstile ? 'Completa la verificación' : 'Entrar'}
         </button>
       </form>
 
@@ -120,7 +139,7 @@ export default function LoginPage() {
 
       <p className="mt-6 text-center text-sm text-wana-muted">
         ¿No tienes cuenta?{' '}
-        <Link href="/auth/register" className="wana-link">
+        <Link href={redirectTo !== '/' ? `/auth/register?redirect=${encodeURIComponent(redirectTo)}` : '/auth/register'} className="wana-link">
           Regístrate
         </Link>
       </p>

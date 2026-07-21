@@ -1,5 +1,5 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import { verifyTurnstileToken, turnstileRequired } from './turnstile.js';
+import { clientIp, verifyTurnstileToken, turnstileRequired } from './turnstile.js';
 
 export async function requireTurnstile(
   request: FastifyRequest,
@@ -8,9 +8,16 @@ export async function requireTurnstile(
 ): Promise<boolean> {
   if (!turnstileRequired()) return true;
 
-  const ok = await verifyTurnstileToken(token ?? '');
-  if (!ok) {
-    reply.status(400).send({ error: 'Verificación de seguridad fallida. Recarga e intenta de nuevo.' });
+  const result = await verifyTurnstileToken(token ?? '', clientIp(request));
+  if (!result.ok) {
+    request.log.warn({ turnstile: result.errorCodes }, 'Turnstile verification failed');
+    const expired = result.errorCodes?.includes('timeout-or-duplicate');
+    reply.status(400).send({
+      error: expired
+        ? 'La verificación expiró. Marca de nuevo el checkbox de seguridad e intenta otra vez.'
+        : 'Verificación de seguridad fallida. Marca el checkbox e intenta de nuevo.',
+      code: 'turnstile_failed',
+    });
     return false;
   }
   return true;
