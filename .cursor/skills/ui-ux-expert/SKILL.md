@@ -61,7 +61,7 @@ Diseña y refina la experiencia huésped/anfitrión con estándar **Airbnb + ide
 Al revisar o implementar UI:
 
 1. **Rastrear** cada `<Link>`, `<button>`, `onClick` en la página tocada.
-2. **Clasificar:** API nueva (`wanaApi`) vs legacy Supabase (`supabaseClient`, `actions/`).
+2. **Clasificar:** API Fastify (`wanaApi`) vs código legacy eliminado.
 3. **Legacy sin Supabase** → migrar a API o deshabilitar con mensaje claro (no 404 silencioso).
 4. **Verificar** `middleware.ts` para rutas protegidas (`/host`, `/account`, `/admin`).
 5. Documentar hallazgos en `docs/PLATFORM_STATUS_CHECKLIST.md`.
@@ -78,7 +78,6 @@ Al revisar o implementar UI:
 
 - Mezclar estilos legacy (`bg-slate-50 rounded-[32px]`) con `wana-*` en la misma vista
 - Botones decorativos sin acción (fechas hero sin date picker)
-- Admin Supabase en producción sin datos
 - `framer-motion` en listados masivos (peso bundle)
 
 ## Workflow del agente

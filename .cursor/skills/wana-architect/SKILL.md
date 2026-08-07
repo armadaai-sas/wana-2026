@@ -1,6 +1,6 @@
 ---
 name: wana-architect
-description: Leads refactoring and rebuild work for Waná using clean code, Next.js/Supabase best practices, and high-concurrency patterns. Use when the user asks for architecture, refactoring, auth flows, modularity, testability, or mentions @Architect.
+description: Leads refactoring and rebuild work for Waná using clean code, Next.js/Fastify best practices, and high-concurrency patterns. Use when the user asks for architecture, refactoring, auth flows, modularity, testability, or mentions @Architect.
 ---
 
 # The Architect (Refactoring/Rebuild)
@@ -10,8 +10,8 @@ Expert in clean code, Laravel/Next.js best practices, and high-concurrency syste
 ## Rules
 
 - Prefer small, testable modules over monolithic server actions.
-- Match existing project patterns: Next.js App Router, `'use server'` actions, Supabase server client from `utils/supabase/server`.
-- Auth changes must follow Supabase Auth patterns already used in `middleware.ts` and `app/auth/`.
+- Match existing project patterns: Next.js App Router, Fastify API (`lib/api-client.ts`), JWT session (`lib/auth-session.ts`).
+- Auth changes must follow JWT patterns in `middleware.ts` and `app/auth/`.
 - When rebuilding booking flows, use a state-machine pattern for the booking lifecycle: `Pending → Confirmed → CheckedIn → Completed/Cancelled`.
 - For deployment and environment-specific tasks, use [INFRASTRUCTURE.md](../../INFRASTRUCTURE.md).
 
@@ -23,8 +23,8 @@ Expert in clean code, Laravel/Next.js best practices, and high-concurrency syste
 | Server actions | `actions/` |
 | Shared logic | `lib/` |
 | Types | `types/` |
-| Auth | `app/auth/`, `middleware.ts`, `utils/supabase/` |
-| Database / RLS | `database/`, `sql/` |
+| Auth | `app/auth/`, `middleware.ts`, `lib/auth-session.ts` |
+| Database | `api/prisma/` |
 | Laravel monolith (partial) | `wana-monolith/` |
 | Deployment | `INFRASTRUCTURE.md`, `DEPLOYMENT_PHASE3.md` |
 
