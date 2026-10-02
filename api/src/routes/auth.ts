@@ -22,6 +22,7 @@ import {
   DEMO_ACCOUNT_BLOCKED_MESSAGE,
   isDemoAccountLoginBlocked,
 } from '../lib/demo-accounts.js';
+import { normalizePhoneE164 } from '../lib/phone-e164.js';
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -29,6 +30,13 @@ const registerSchema = z.object({
   name: z.string().min(1).max(120),
   role: z.enum(['guest', 'host']).default('guest'),
   turnstile_token: z.string().optional(),
+  phone_e164: z.string().optional(),
+  whatsapp_opt_in: z.boolean().optional(),
+});
+
+const profileUpdateSchema = z.object({
+  phone_e164: z.string().optional().nullable(),
+  whatsapp_opt_in: z.boolean().optional(),
 });
 
 const loginSchema = z.object({
@@ -65,7 +73,7 @@ export async function authRoutes(app: FastifyInstance) {
       return reply.status(400).send({ error: 'Invalid body', details: body.error.flatten() });
     }
 
-    const { email, password, name, role, turnstile_token } = body.data;
+    const { email, password, name, role, turnstile_token, phone_e164, whatsapp_opt_in } = body.data;
 
     if (isDemoAccountLoginBlocked(email)) {
       return reply.status(403).send({ error: DEMO_ACCOUNT_BLOCKED_MESSAGE });
@@ -78,9 +86,29 @@ export async function authRoutes(app: FastifyInstance) {
 
     if (!(await requireTurnstile(request, reply, turnstile_token))) return;
 
+    let phoneE164: string | undefined;
+    if (phone_e164?.trim()) {
+      const normalized = normalizePhoneE164(phone_e164);
+      if (!normalized) {
+        return reply.status(400).send({ error: 'Invalid phone number' });
+      }
+      const phoneTaken = await prisma.user.findUnique({ where: { phoneE164: normalized } });
+      if (phoneTaken) {
+        return reply.status(409).send({ error: 'Phone number already in use' });
+      }
+      phoneE164 = normalized;
+    }
+
     const passwordHash = await hashPassword(password);
     const user = await prisma.user.create({
-      data: { email, name, passwordHash, role },
+      data: {
+        email,
+        name,
+        passwordHash,
+        role,
+        phoneE164,
+        whatsappOptIn: Boolean(whatsapp_opt_in && phoneE164),
+      },
     });
 
     const token = await signToken({ id: user.id, email: user.email, role: user.role });
@@ -191,6 +219,51 @@ export async function authRoutes(app: FastifyInstance) {
     if (!user) {
       return { user: null };
     }
+
+    return { user: serializeUser(user) };
+  });
+
+  app.patch('/auth/profile', { preHandler: authenticate }, async (request, reply) => {
+    const body = profileUpdateSchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send({ error: 'Invalid body', details: body.error.flatten() });
+    }
+
+    let phoneE164: string | null | undefined;
+    if (body.data.phone_e164 === null || body.data.phone_e164 === '') {
+      phoneE164 = null;
+    } else if (body.data.phone_e164 !== undefined) {
+      const normalized = normalizePhoneE164(body.data.phone_e164);
+      if (!normalized) {
+        return reply.status(400).send({ error: 'Invalid phone number' });
+      }
+      const phoneTaken = await prisma.user.findFirst({
+        where: { phoneE164: normalized, NOT: { id: request.auth!.sub } },
+      });
+      if (phoneTaken) {
+        return reply.status(409).send({ error: 'Phone number already in use' });
+      }
+      phoneE164 = normalized;
+    }
+
+    const current = await prisma.user.findUnique({ where: { id: request.auth!.sub } });
+    if (!current) {
+      return reply.status(404).send({ error: 'User not found' });
+    }
+
+    const nextPhone = phoneE164 !== undefined ? phoneE164 : current.phoneE164;
+    const whatsappOptIn =
+      body.data.whatsapp_opt_in !== undefined
+        ? body.data.whatsapp_opt_in && Boolean(nextPhone)
+        : current.whatsappOptIn;
+
+    const user = await prisma.user.update({
+      where: { id: request.auth!.sub },
+      data: {
+        ...(phoneE164 !== undefined ? { phoneE164 } : {}),
+        whatsappOptIn,
+      },
+    });
 
     return { user: serializeUser(user) };
   });

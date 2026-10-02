@@ -73,13 +73,15 @@ enum InvoiceStatus {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  name         String?
-  passwordHash String?  @map("password_hash")
-  role         UserRole @default(guest)
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(uuid())
+  email          String   @unique
+  name           String?
+  passwordHash   String?  @map("password_hash")
+  role           UserRole @default(guest)
+  phoneE164      String?  @unique @map("phone_e164")
+  whatsappOptIn  Boolean  @default(false) @map("whatsapp_opt_in")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   properties Property[] @relation("HostProperties")
   bookings   Booking[]  @relation("GuestBookings")
@@ -180,9 +182,11 @@ model Booking {
   status         BookingStatus @default(draft)
   feesBreakdown  Json?         @map("fees_breakdown")
   idempotencyKey String?       @unique @map("idempotency_key")
-  guestEmail     String?       @map("guest_email")
-  guestName      String?       @map("guest_name")
-  invoiceId      String?       @map("invoice_id")
+  guestEmail           String?  @map("guest_email")
+  guestName            String?  @map("guest_name")
+  guestPhone           String?  @map("guest_phone")
+  guestWhatsappOptIn   Boolean  @default(false) @map("guest_whatsapp_opt_in")
+  invoiceId            String?  @map("invoice_id")
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
 
@@ -278,4 +282,30 @@ model PendingInvoice {
   @@index([status, createdAt])
   @@index([bookingId])
   @@map("pending_invoices")
+}
+
+model WhatsAppMessageLog {
+  id             String   @id @default(uuid())
+  idempotencyKey String   @unique @map("idempotency_key")
+  toPhone        String   @map("to_phone")
+  templateName   String?  @map("template_name")
+  waMessageId    String?  @map("wa_message_id")
+  status         String
+  error          String?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([toPhone, createdAt])
+  @@map("whatsapp_message_logs")
+}
+
+model WhatsAppConversation {
+  id         String   @id @default(uuid())
+  phoneE164  String   @unique @map("phone_e164")
+  userId     String?  @map("user_id")
+  state      Json     @default("{}")
+  needsHuman Boolean  @default(false) @map("needs_human")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("whatsapp_conversations")
 }

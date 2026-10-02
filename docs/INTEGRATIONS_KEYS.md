@@ -10,6 +10,7 @@ Referencia de qué servicio usa cada variable (sin valores secretos).
 | **Meta / Facebook** | `META_APP_ID`, `META_APP_SECRET`, `NEXT_PUBLIC_META_PIXEL_ID`, `META_PIXEL_ID` | ✅ Pixel en web; CAPI necesita `META_ACCESS_TOKEN` |
 | **Sentry** | `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN` | 📋 Variables listas; instalar `@sentry/nextjs` en próximo deploy |
 | **Alegra** | `ALEGRA_EMAIL`, `ALEGRA_API_TOKEN`, `ALEGRA_TEST_SET_ID` | ⚠️ Falta `ALEGRA_EMAIL` (login Alegra) |
+| **WhatsApp Cloud API** | `WHATSAPP_*` (ver abajo) | ✅ Webhook + plantillas + bot FAQ |
 
 ## Cloudflare Turnstile
 
@@ -59,6 +60,22 @@ Bypass temporal (solo debug): `TURNSTILE_DISABLED=1` y `NEXT_PUBLIC_TURNSTILE_DI
 - **Email** (`ALEGRA_EMAIL`): email de tu cuenta Alegra (obligatorio para API).
 - **TestSetId**: set de pruebas facturación electrónica Colombia.
 
+## WhatsApp Business (Cloud API)
+
+Guía completa: [`docs/WHATSAPP_SETUP.md`](WHATSAPP_SETUP.md).
+
+| Variable | Uso |
+|----------|-----|
+| `WHATSAPP_PHONE_NUMBER_ID` | ID del número en API Setup |
+| `WHATSAPP_WABA_ID` | WhatsApp Business Account ID |
+| `WHATSAPP_ACCESS_TOKEN` | System user token (mensajería) |
+| `WHATSAPP_WEBHOOK_VERIFY_TOKEN` | Verificación GET del webhook |
+| `WHATSAPP_APP_SECRET` | Firma `X-Hub-Signature-256` en POST |
+| `WHATSAPP_HANDOFF_EMAIL` | Alerta cuando el huésped pide humano |
+| `WHATSAPP_TEMPLATE_*` | Nombres de plantillas aprobadas en Meta |
+
+Webhook: `https://eleveri.app/api/v1/webhooks/whatsapp`
+
 ## Seguridad
 
-Si compartiste claves en chat, **rota** las que puedas en cada panel (Resend, Cloudflare, Google, Meta, Alegra) después del deploy.
+Si compartiste claves en chat, **rota** las que puedas en cada panel (Resend, Cloudflare, Google, Meta, Alegra, WhatsApp) después del deploy.

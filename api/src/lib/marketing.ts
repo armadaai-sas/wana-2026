@@ -5,6 +5,10 @@ import {
   sendBookingConfirmationEmail,
   sendInvoiceReceiptEmail,
 } from './transactional-emails.js';
+import {
+  sendWhatsAppBookingConfirmation,
+  sendWhatsAppHostNewBooking,
+} from './whatsapp/transactional.js';
 
 export {
   sendBookingConfirmationEmail,
@@ -68,6 +72,8 @@ export async function sendMetaPurchaseEvent(bookingId: string): Promise<void> {
 export async function onBookingConfirmed(bookingId: string): Promise<void> {
   await Promise.allSettled([
     sendBookingConfirmationEmail(bookingId),
+    sendWhatsAppBookingConfirmation(bookingId),
+    sendWhatsAppHostNewBooking(bookingId),
     sendMetaPurchaseEvent(bookingId),
     issueBookingInvoice(bookingId),
   ]);

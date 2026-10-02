@@ -1,13 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import Header from '@/components/Header';
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 import ChangePasswordForm from '@/components/account/ChangePasswordForm';
 import GuestBookingsList from '@/components/account/GuestBookingsList';
+import WhatsAppPreferences from '@/components/account/WhatsAppPreferences';
+import type { AuthUser } from '@/lib/api-client';
 
 export default function AccountPage() {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout, refresh } = useAuth();
+  const [profileUser, setProfileUser] = useState<AuthUser | null>(null);
+  const displayUser = profileUser ?? user;
 
   return (
     <>
@@ -19,7 +24,7 @@ export default function AccountPage() {
 
           {loading ? (
             <p className="mt-6 text-wana-muted">Cargando…</p>
-          ) : !user ? (
+          ) : !displayUser ? (
             <div className="mt-6">
               <p className="text-wana-muted">No has iniciado sesión.</p>
               <Link href="/auth/login" className="wana-btn-primary mt-4 inline-flex min-h-[48px]">
@@ -31,30 +36,37 @@ export default function AccountPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-xl border border-wana-border bg-wana-cream/50 p-4">
                   <p className="wana-label">Nombre</p>
-                  <p className="mt-1 font-medium text-wana-charcoal">{user.name ?? '—'}</p>
+                  <p className="mt-1 font-medium text-wana-charcoal">{displayUser.name ?? '—'}</p>
                 </div>
                 <div className="rounded-xl border border-wana-border bg-wana-cream/50 p-4">
                   <p className="wana-label">Email</p>
-                  <p className="mt-1 font-medium text-wana-charcoal">{user.email}</p>
+                  <p className="mt-1 font-medium text-wana-charcoal">{displayUser.email}</p>
                 </div>
                 <div className="rounded-xl border border-wana-border bg-wana-cream/50 p-4 sm:col-span-2">
                   <p className="wana-label">Tipo de cuenta</p>
-                  <p className="mt-1 font-medium capitalize text-wana-charcoal">{user.role}</p>
+                  <p className="mt-1 font-medium capitalize text-wana-charcoal">{displayUser.role}</p>
                 </div>
               </div>
+              <WhatsAppPreferences
+                user={displayUser}
+                onUpdated={(u) => {
+                  setProfileUser(u);
+                  void refresh();
+                }}
+              />
               <div className="flex flex-wrap gap-4">
-                {user.role === 'host' && (
+                {displayUser.role === 'host' && (
                   <Link href="/host" className="text-sm font-semibold text-wana-forest hover:text-wana-gold">
                     Gestionar propiedades →
                   </Link>
                 )}
-                {user.role === 'admin' && (
+                {displayUser.role === 'admin' && (
                   <Link href="/admin" className="text-sm font-semibold text-wana-forest hover:text-wana-gold">
                     Panel admin →
                   </Link>
                 )}
               </div>
-              {user.role !== 'admin' && <GuestBookingsList />}
+              {displayUser.role !== 'admin' && <GuestBookingsList />}
               <ChangePasswordForm />
               <button type="button" onClick={logout} className="wana-btn-ghost min-h-[48px]">
                 Cerrar sesión

@@ -14,6 +14,7 @@ import { calculateCancellationRefund } from '../lib/cancellation-policy.js';
 import { issuePaymentRefund } from '../lib/refund-payment.js';
 import { sendBookingCancellationEmail } from '../lib/transactional-emails.js';
 import { authenticate } from '../plugins/auth.js';
+import { normalizePhoneE164 } from '../lib/phone-e164.js';
 
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
@@ -27,6 +28,8 @@ const quoteSchema = z.object({
 const createBookingSchema = quoteSchema.extend({
   guest_email: z.string().email().optional(),
   guest_name: z.string().min(1).optional(),
+  guest_phone: z.string().optional(),
+  guest_whatsapp_opt_in: z.boolean().optional(),
   idempotency_key: z.string().min(8).max(128),
 });
 
@@ -85,6 +88,26 @@ export async function bookingRoutes(app: FastifyInstance) {
     const guestId = request.auth!.sub;
     const guestEmail = data.guest_email ?? request.auth!.email;
     const guestName = data.guest_name ?? guestEmail.split('@')[0];
+    const guestUser = await prisma.user.findUnique({ where: { id: guestId } });
+
+    let guestPhone: string | null = null;
+    if (data.guest_phone?.trim()) {
+      guestPhone = normalizePhoneE164(data.guest_phone);
+      if (!guestPhone) {
+        return reply.status(400).send({ error: 'Invalid guest phone number' });
+      }
+    } else if (guestUser?.phoneE164) {
+      guestPhone = guestUser.phoneE164;
+    }
+
+    const guestWhatsappOptIn = Boolean(
+      guestPhone &&
+        (data.guest_whatsapp_opt_in === true ||
+          (data.guest_whatsapp_opt_in === undefined &&
+            guestUser?.whatsappOptIn &&
+            guestPhone === guestUser.phoneE164)),
+    );
+
     const checkIn = parseDateUTC(data.check_in);
     const checkOut = parseDateUTC(data.check_out);
 
@@ -122,6 +145,8 @@ export async function bookingRoutes(app: FastifyInstance) {
         idempotencyKey: data.idempotency_key,
         guestEmail,
         guestName,
+        guestPhone,
+        guestWhatsappOptIn,
       });
 
       return reply.status(201).send({ booking, reused: false });

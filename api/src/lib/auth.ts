@@ -92,11 +92,15 @@ export function serializeUser(user: {
   email: string;
   name: string | null;
   role: UserRole;
+  phoneE164?: string | null;
+  whatsappOptIn?: boolean;
 }) {
   return {
     id: user.id,
     email: user.email,
     name: user.name,
     role: user.role,
+    phone_e164: user.phoneE164 ?? null,
+    whatsapp_opt_in: user.whatsappOptIn ?? false,
   };
 }

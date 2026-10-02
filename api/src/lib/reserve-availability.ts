@@ -74,6 +74,8 @@ export interface CreateBookingWithBlockInput {
   idempotencyKey: string;
   guestEmail: string;
   guestName: string;
+  guestPhone?: string | null;
+  guestWhatsappOptIn?: boolean;
 }
 
 /**
@@ -108,6 +110,8 @@ export async function createBookingWithAvailabilityBlock(
         idempotencyKey: input.idempotencyKey,
         guestEmail: input.guestEmail,
         guestName: input.guestName,
+        guestPhone: input.guestPhone ?? null,
+        guestWhatsappOptIn: input.guestWhatsappOptIn ?? false,
       },
     });
 

@@ -24,6 +24,8 @@ export default function RegisterClient({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'guest' | 'host'>(initialRole);
+  const [phone, setPhone] = useState('');
+  const [whatsappOptIn, setWhatsappOptIn] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState('');
   const [turnstileResetKey, setTurnstileResetKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -59,6 +61,8 @@ export default function RegisterClient({
         name,
         role,
         turnstile_token: turnstileToken || undefined,
+        phone_e164: phone.trim() || undefined,
+        whatsapp_opt_in: whatsappOptIn && Boolean(phone.trim()),
       });
       afterAuth(user);
     } catch (err) {
@@ -156,6 +160,26 @@ export default function RegisterClient({
             </button>
           </div>
         </fieldset>
+        <label className="block space-y-1.5">
+          <span className="wana-label">Celular (opcional, WhatsApp)</span>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="wana-input"
+            autoComplete="tel"
+            placeholder="+57 300 123 4567"
+          />
+        </label>
+        <label className="flex items-start gap-2 text-sm text-wana-muted">
+          <input
+            type="checkbox"
+            checked={whatsappOptIn}
+            onChange={(e) => setWhatsappOptIn(e.target.checked)}
+            className="mt-1"
+          />
+          <span>Recibir confirmaciones de reserva por WhatsApp.</span>
+        </label>
 
         {TURNSTILE_ENABLED && (
           <TurnstileWidget
