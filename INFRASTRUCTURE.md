@@ -44,6 +44,7 @@ Or all-in-docker: `npm run docker:up`
 - `POST /api/v1/payments/:id/mock-complete` — solo `PAYMENTS_MODE=mock`
 - `POST /api/v1/webhooks/bold`
 - `POST /api/v1/webhooks/stripe`
+- `GET/POST /api/v1/webhooks/whatsapp` — Meta Cloud API (ver `docs/WHATSAPP_SETUP.md`)
 - `POST /api/v1/auth/register` · `POST /api/v1/auth/login` · `GET /api/v1/auth/me`
 
 ### Auth (JWT)

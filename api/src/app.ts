@@ -10,6 +10,7 @@ import { mediaRoutes } from './routes/media.js';
 import { authRoutes } from './routes/auth.js';
 import { adminRoutes } from './routes/admin.js';
 import { hostRoutes } from './routes/host.js';
+import { whatsAppWebhookRoutes } from './routes/webhooks-whatsapp.js';
 
 export async function buildApp() {
   const app = Fastify({ logger: true });
@@ -54,6 +55,7 @@ export async function buildApp() {
   await app.register(bookingRoutes, { prefix: '/api/v1' });
   await app.register(paymentRoutes, { prefix: '/api/v1' });
   await app.register(webhookRoutes, { prefix: '/api/v1' });
+  await app.register(whatsAppWebhookRoutes, { prefix: '/api/v1' });
   await app.register(mediaRoutes, { prefix: '/api/v1' });
   await app.register(authRoutes, { prefix: '/api/v1' });
   await app.register(hostRoutes, { prefix: '/api/v1' });

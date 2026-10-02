@@ -86,6 +86,8 @@ export default function BookingWidget({
   const [showCalendar, setShowCalendar] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dateError, setDateError] = useState<string | null>(null);
+  const [guestPhone, setGuestPhone] = useState('');
+  const [whatsappOptIn, setWhatsappOptIn] = useState(false);
   const { user, loading: authLoading } = useAuth();
   const pathname = usePathname();
   const loginRedirect = `${pathname}?book=1`;
@@ -104,6 +106,11 @@ export default function BookingWidget({
       setMobileOpen(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (user?.phone_e164) setGuestPhone(user.phone_e164);
+    if (user?.whatsapp_opt_in) setWhatsappOptIn(true);
+  }, [user?.phone_e164, user?.whatsapp_opt_in]);
 
   const disabledDays = useMemo(() => {
     const days: Date[] = [];
@@ -171,6 +178,12 @@ export default function BookingWidget({
         check_out: toDateString(range.to),
         guests,
         idempotency_key: crypto.randomUUID(),
+        ...(guestPhone.trim()
+          ? {
+              guest_phone: guestPhone.trim(),
+              guest_whatsapp_opt_in: whatsappOptIn,
+            }
+          : {}),
       });
 
       const bookingId = (booking as { id: string }).id;
@@ -276,6 +289,30 @@ export default function BookingWidget({
             <span>Total</span>
             <span>{formatMoney(quote.fees.total_charge_to_guest, currency)}</span>
           </div>
+        </div>
+      )}
+
+      {user && (
+        <div className="mt-5 space-y-3 border-t border-wana-border pt-4">
+          <label className="block space-y-1">
+            <span className="text-xs font-semibold uppercase tracking-wide text-wana-muted">WhatsApp</span>
+            <input
+              type="tel"
+              value={guestPhone}
+              onChange={(e) => setGuestPhone(e.target.value)}
+              placeholder="+57 300 123 4567"
+              className="wana-input w-full text-sm"
+            />
+          </label>
+          <label className="flex items-start gap-2 text-xs text-wana-muted">
+            <input
+              type="checkbox"
+              checked={whatsappOptIn}
+              onChange={(e) => setWhatsappOptIn(e.target.checked)}
+              className="mt-0.5"
+            />
+            <span>Enviar confirmación y recordatorios por WhatsApp.</span>
+          </label>
         </div>
       )}
 

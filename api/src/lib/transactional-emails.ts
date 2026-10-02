@@ -10,6 +10,10 @@ import {
   buildWelcomeEmail,
 } from './email-templates/index.js';
 import type { WanaFees } from './fees.js';
+import {
+  sendWhatsAppBookingCancellation,
+  sendWhatsAppCheckInReminder,
+} from './whatsapp/transactional.js';
 
 function skipDemoEmail(email: string): boolean {
   return email.trim().toLowerCase().endsWith('@wana.local');
@@ -144,7 +148,15 @@ export async function sendBookingCancellationEmail(params: {
     include: { property: { select: { title: true, slug: true, city: true } } },
   });
 
-  if (!booking?.guestEmail || skipDemoEmail(booking.guestEmail)) {
+  if (!booking) {
+    return { sent: false, reason: 'booking not found' };
+  }
+
+  await sendWhatsAppBookingCancellation({ bookingId: params.bookingId }).catch((err) => {
+    console.error('[whatsapp] cancellation failed', params.bookingId, err);
+  });
+
+  if (!booking.guestEmail || skipDemoEmail(booking.guestEmail)) {
     return { sent: false, reason: 'no guest email' };
   }
 
@@ -193,6 +205,9 @@ export async function sendCheckInReminderEmail(bookingId: string): Promise<{ sen
   });
 
   const result = await sendEmail({ to: booking.guestEmail, subject, text, html });
+  await sendWhatsAppCheckInReminder(bookingId).catch((err) => {
+    console.error('[whatsapp] check-in reminder failed', bookingId, err);
+  });
   if (result.sent) {
     await prisma.bookingEvent.create({
       data: {

@@ -1,10 +1,38 @@
 # Eleveri — Mapa go-live producción
 
-**Última actualización:** Jul 2026  
+**Última actualización:** 12 Aug 2026  
 **Estado actual:** `https://eleveri.app` · `PAYMENTS_MODE=mock` · pre-live operativo  
+**Health (live):** `{"status":"ok","database":"connected","turnstile_required":true}`  
+**Veredicto:** **No listo para ventas públicas.** El stack y el booking engine están listos; el cobro real (Bold/Stripe/Alegra) bloquea revenue.  
 **Objetivo:** lanzar cobro real sin sorpresas (Bold/Stripe es el último candado, no el primero)
 
 Leyenda: `[ ]` pendiente · `[x]` hecho · `⏸` bloqueado por dependencia externa
+
+---
+
+## Matriz de estado (auditoría 12 Aug 2026)
+
+| Área | Estado | Blocker? | Evidencia |
+|------|--------|----------|-----------|
+| Infra / Docker | Listo | No | Droplet + compose staging; `/health` OK |
+| Dominio + HTTPS | Listo | No | `https://eleveri.app` (Cloudflare) |
+| Pagos live | Mock | **Sí** | `PAYMENTS_MODE=mock`; sin keys Bold/Stripe |
+| Webhooks | No apuntados | **Sí** | Falta URL live en dashboards |
+| Alegra | Sin credenciales | **Sí** | `validate-env` exige keys si `PAYMENTS_MODE=live` |
+| Emails (Resend) | Código listo | **Sí** (UX) | DNS + `RESEND_API_KEY` no confirmados |
+| Seguridad (código) | Listo | No | Demo `@wana.local` bloqueado en live; JWT + roles |
+| Backups / ops | Script existe | **Sí** | `backup-db.sh`; cron/restore no confirmados |
+
+### P0 — antes de cobro real
+
+- [ ] `.env.production` desde `deploy/.env.production.example` (URLs `https://eleveri.app`, nunca en git)
+- [ ] Bold live + webhook `https://eleveri.app/api/v1/webhooks/bold`
+- [ ] Stripe live + webhook `https://eleveri.app/api/v1/webhooks/stripe`
+- [ ] `ALEGRA_EMAIL` + `ALEGRA_API_TOKEN`
+- [ ] `PAYMENTS_MODE=live` → `npm run go-live:validate` → deploy prod
+- [ ] Smoke: registro → reserva → pago COP real → `confirmed`
+- [ ] Cron `backup-db.sh` + restore de un dump
+- [ ] Resend: dominio `eleveri.app` verificado + email de confirmación real
 
 ---
 

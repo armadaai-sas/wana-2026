@@ -2,6 +2,7 @@ import { prisma } from './prisma.js';
 import { nightsBetween, type WanaFees } from './fees.js';
 import { buildAlegraInvoicePayload, createAlegraInvoice, getAlegraClient } from './alegra.js';
 import { sendInvoiceReceiptEmail } from './transactional-emails.js';
+import { sendWhatsAppInvoiceReceipt } from './whatsapp/transactional.js';
 
 export async function issueBookingInvoice(bookingId: string): Promise<void> {
   const booking = await prisma.booking.findUnique({
@@ -54,6 +55,9 @@ export async function issueBookingInvoice(bookingId: string): Promise<void> {
     await sendInvoiceReceiptEmail({ bookingId }).catch((err) => {
       console.error('[invoicing] Invoice receipt email failed', { bookingId, err });
     });
+    await sendWhatsAppInvoiceReceipt({ bookingId }).catch((err) => {
+      console.error('[invoicing] Invoice receipt WhatsApp failed', { bookingId, err });
+    });
     return;
   }
 
@@ -83,6 +87,9 @@ export async function issueBookingInvoice(bookingId: string): Promise<void> {
     sendInvoiceReceiptEmail({ bookingId, invoiceId: String(invoice.id) }).catch((err) => {
       console.error('[invoicing] Invoice receipt email failed', { bookingId, err });
     });
+    sendWhatsAppInvoiceReceipt({ bookingId, invoiceId: String(invoice.id) }).catch((err) => {
+      console.error('[invoicing] Invoice receipt WhatsApp failed', { bookingId, err });
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error('[invoicing] Alegra failed', { bookingId, error: message });
@@ -98,6 +105,9 @@ export async function issueBookingInvoice(bookingId: string): Promise<void> {
 
     await sendInvoiceReceiptEmail({ bookingId }).catch((err) => {
       console.error('[invoicing] Invoice receipt email failed', { bookingId, err });
+    });
+    await sendWhatsAppInvoiceReceipt({ bookingId }).catch((err) => {
+      console.error('[invoicing] Invoice receipt WhatsApp failed', { bookingId, err });
     });
   }
 }

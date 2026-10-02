@@ -1,7 +1,7 @@
 # Waná — Smart Checklist (estado de plataforma)
 
-**Última revisión:** post-deploy `https://eleveri.app`  
-**Modo:** pre-live · pagos mock · dominio Eleveri activo  
+**Última revisión:** 12 Aug 2026 — post-deploy `https://eleveri.app`  
+**Modo:** pre-live · pagos mock · dominio Eleveri activo · **no listo para ventas públicas**  
 **Mapa go-live (checklist ejecutable):** [`docs/GO_LIVE_PRODUCTION_MAP.md`](GO_LIVE_PRODUCTION_MAP.md)
 
 Leyenda: ✅ listo · ⚠️ parcial · ❌ no funcional / legacy · 📋 pendiente
@@ -163,10 +163,11 @@ Leyenda: ✅ listo · ⚠️ parcial · ❌ no funcional / legacy · 📋 pendie
 11. Favicon + OG images por propiedad en prod
 
 ### P3 — Go-live
-12. Dominio + HTTPS
+12. ~~Dominio + HTTPS~~ ✅ (`https://eleveri.app`)
 13. Keys Bold/Stripe + webhooks
 14. Alegra + Resend emails
-15. Desactivar cuentas demo en prod
+15. ~~Desactivar cuentas demo en prod~~ ✅ (bloqueadas en código cuando `PAYMENTS_MODE=live`; confirmar en cutover)
+16. Cron backups + restore test
 
 ---
 

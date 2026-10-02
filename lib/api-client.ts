@@ -88,6 +88,8 @@ export interface AuthUser {
   email: string;
   name: string | null;
   role: 'guest' | 'host' | 'admin';
+  phone_e164?: string | null;
+  whatsapp_opt_in?: boolean;
 }
 
 export const wanaApi = {
@@ -105,6 +107,8 @@ export const wanaApi = {
     name: string;
     role?: 'guest' | 'host';
     turnstile_token?: string;
+    phone_e164?: string;
+    whatsapp_opt_in?: boolean;
   }) =>
     request<{ token: string; user: AuthUser }>('/api/v1/auth/register', {
       method: 'POST',
@@ -122,6 +126,13 @@ export const wanaApi = {
     }),
 
   me: () => request<{ user: AuthUser | null }>('/api/v1/auth/me', { auth: true }),
+
+  updateProfile: (body: { phone_e164?: string | null; whatsapp_opt_in?: boolean }) =>
+    request<{ user: AuthUser }>('/api/v1/auth/profile', {
+      method: 'PATCH',
+      auth: true,
+      body: JSON.stringify(body),
+    }),
 
   changePassword: (password: string) =>
     request<{ success: boolean }>('/api/v1/auth/change-password', {
@@ -253,6 +264,8 @@ export const wanaApi = {
     idempotency_key: string;
     guest_email?: string;
     guest_name?: string;
+    guest_phone?: string;
+    guest_whatsapp_opt_in?: boolean;
   }) =>
     request<{ booking: unknown; reused: boolean }>('/api/v1/bookings', {
       method: 'POST',
